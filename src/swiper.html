@@ -1,0 +1,65 @@
+<html>
+
+<head>
+    <title>swiper</title>
+    <style type="text/css">
+    ul {
+        width: 200px;
+        margin: 0px auto;
+        padding: 0px;
+        display: block;
+    }
+
+    li {
+        display: inline-flex;
+        position: absolute;
+        width: 200px;
+        height: 150px;
+        background: darkgrey;
+        justify-content: center;
+        align-items: center;
+        transition: all 1s;
+        -webkit-transition: all 1s;
+    }
+
+    li.next{
+        transform: translate(-100%) scale(0.8);
+        -webkit-transform:translate(-100%) scale(0.8);
+        -ms-tranform:translate(-100%) scale(0.8);
+    }
+    li.cur{
+    	transform: scale(1);
+        -webkit-transform: scale(1);
+        -ms-tranform: scale(1);
+        z-index: 10;
+    }
+    li.pre{
+    	transform: translate(100%) scale(0.8);
+        -webkit-transform:translate(100%) scale(0.8);
+        -ms-tranform:translate(100%) scale(0.8);
+    }
+    </style>
+</head>
+
+<body>
+    <ul>
+        <li class="pre">hello1</li>
+        <li class="cur">hello2</li>
+        <li class="next">hello3</li>
+    </ul>
+    <script type="text/javascript">
+    var st = setInterval(function() {
+        var pre = document.getElementsByClassName("pre")[0];
+        var cur = document.getElementsByClassName("cur")[0];
+        var next = document.getElementsByClassName("next")[0];
+        pre.classList.remove("pre");
+        pre.classList.add("next");
+        cur.classList.remove("cur");
+        cur.classList.add("pre");
+        next.classList.remove("next");
+        next.classList.add("cur");
+    }, 3000)
+    </script>
+</body>
+
+</html>

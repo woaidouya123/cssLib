@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>step</title>
+    <style type="text/css">
+    ul {
+        list-style: none;
+    }
+    li {
+    	display: inline-block;
+    }
+
+    li div {
+        display: inline-block;
+        position: relative;
+    }
+    li div >span:first-child {
+    	display: block;
+    	background: skyblue;
+        width: 3em;
+        height: 3em;
+        line-height: 3em;
+        text-align: center;
+        border-radius: 50%;
+        color: white;
+    }
+    li div >span:nth-child(2) {
+    	position: absolute;
+    }
+
+    ul li:after{
+    	display: inline-block;
+    	content: "";
+    	width: 100px;
+    	border:1px solid skyblue;
+    	vertical-align: middle;
+    }
+    ul li:last-child:after{
+    	display: none;
+    }
+    </style>
+</head>
+
+<body>
+    <ul>
+        <li><div>
+        <span>1</span><span>第一步</span></div></li><li><div>
+        <span>2</span><span>第二步</span></div></li><li><div>
+        <span>3</span><span>第三步</span></div></li><li><div>
+        <span>4</span><span>第四步</span></div>
+        </li>
+    </ul>
+</body>
+
+</html>
