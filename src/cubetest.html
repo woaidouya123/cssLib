@@ -1,0 +1,167 @@
+<html>
+
+<head>
+    <title>cubetest</title>
+</head>
+<style type="text/css">
+img {
+    width: 600px;
+    height: 600px;
+}
+
+.container > div{
+    position: absolute;
+}
+
+.tran_container .cube {
+    width: 600px;
+    height: 200px;
+    transform-style: preserve-3d;
+    transition: transform 10s;
+    animation: rotating 10s linear infinite;
+    /*perspective: 2000;
+    -webkit-perspective: 2000;*/
+}
+.tran_container div.cube1{
+	animation-delay: 0.5s;
+}
+.tran_container div.cube2{
+	animation-delay: 1s;
+}
+.tran_container div.cube3{
+	animation-delay: 1.5s;
+}
+.cube div{
+	position: absolute;
+}
+.cube .front{
+	height: 200px;
+	width: 600px;
+	transform: translateZ(30px);
+	border: none;
+}
+.cube1 .front{
+	background: url("images/nkss1.jpeg") no-repeat;
+	background-size: 100% 300%;
+}
+.cube2 .front{
+	background: url("images/nkss1.jpeg") no-repeat;
+	background-size: 100% 300%;
+	background-position: 0px -200px;
+}
+.cube3 .front{
+	background: url("images/nkss1.jpeg") no-repeat;
+	background-size: 100% 300%;
+	background-position: 0px -400px;
+}
+.cube1 .back{
+	background: url("images/nkss2.png") no-repeat;
+	background-size: 100% 300%;
+}
+.cube2 .back{
+	background: url("images/nkss2.png") no-repeat;
+	background-size: 100% 300%;
+	background-position: 0px -200px;
+}
+.cube3 .back{
+	background: url("images/nkss2.png") no-repeat;
+	background-size: 100% 300%;
+	background-position: 0px -400px;
+}
+.cube .back{
+	background-color: gray;
+	height: 200px;
+	width: 600px;
+	transform: translateZ(-30px);
+}
+.cube .right{
+	background-color: gray;
+	height: 200px;
+	width: 60px;
+	transform: rotateY(90deg) translateZ(570px);
+	border-right: 1px solid black;
+}
+.cube .left{
+	background-color: gray;
+	height: 200px;
+	width: 60px;
+	transform: rotateY(-90deg) translateZ(30px);
+	border-left: 1px solid black;
+}
+.cube .up{
+	background-color: gray;
+	height: 60px;
+	width: 600px;
+	transform: rotateX(90deg) translateZ(30px);
+	border-left: 1px solid black;
+}
+.cube .down{
+	background-color: gray;
+	height: 60px;
+	width: 600px;
+	transform: rotateX(-90deg) translateZ(170px);
+	border-left: 1px solid black;
+}
+@keyframes rotating {
+    0% {
+        transform: rotateY(0deg);
+    }
+    10%{
+    	transform: rotateY(0deg);
+    }
+    20%{
+		transform: rotateY(-180deg) scale(0.6) rotateX(180deg);
+    }
+    40%{
+    	transform: rotateY(-180deg) rotateX(360deg);
+    }
+    60%{
+    	transform: rotateY(-180deg) rotateX(360deg);
+    }
+    80%{
+    	transform: rotateY(-180deg) scale(0.6) rotateX(180deg);
+    }
+
+    100% {
+        transform: rotateY(-360deg) rotateX(360deg);
+    }
+}
+</style>
+
+<body>
+    <div class="container">
+        <div class="img_container">
+            <!-- <img src="nkss1.jpeg" alt="nkss" /> -->
+        </div>
+        <div class="tran_container">
+            <div class="cube cube1">
+                <div class="front"></div>
+                <div class="back"></div>
+                <div class="up"></div>
+                <div class="down"></div>
+                <div class="right"></div>
+                <div class="left"></div>
+            </div>
+            <div class="cube cube2">
+                <div class="front"></div>
+                <div class="back"></div>
+                <div class="up"></div>
+                <div class="down"></div>
+                <div class="right"></div>
+                <div class="left"></div>
+            </div>
+            <div class="cube cube3">
+                <div class="front"></div>
+                <div class="back"></div>
+                <div class="up"></div>
+                <div class="down"></div>
+                <div class="right"></div>
+                <div class="left"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+    </script>
+</body>
+
+</html>
