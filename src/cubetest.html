@@ -7,100 +7,10 @@
 img {
     width: 600px;
     height: 600px;
+    position: absolute;;
 }
-
 .container > div{
     position: absolute;
-}
-
-.tran_container .cube {
-    width: 600px;
-    height: 200px;
-    transform-style: preserve-3d;
-    transition: transform 10s;
-    animation: rotating 10s linear infinite;
-    /*perspective: 2000;
-    -webkit-perspective: 2000;*/
-}
-.tran_container div.cube1{
-	animation-delay: 0.5s;
-}
-.tran_container div.cube2{
-	animation-delay: 1s;
-}
-.tran_container div.cube3{
-	animation-delay: 1.5s;
-}
-.cube div{
-	position: absolute;
-}
-.cube .front{
-	height: 200px;
-	width: 600px;
-	transform: translateZ(30px);
-	border: none;
-}
-.cube1 .front{
-	background: url("images/nkss1.jpeg") no-repeat;
-	background-size: 100% 300%;
-}
-.cube2 .front{
-	background: url("images/nkss1.jpeg") no-repeat;
-	background-size: 100% 300%;
-	background-position: 0px -200px;
-}
-.cube3 .front{
-	background: url("images/nkss1.jpeg") no-repeat;
-	background-size: 100% 300%;
-	background-position: 0px -400px;
-}
-.cube1 .back{
-	background: url("images/nkss2.png") no-repeat;
-	background-size: 100% 300%;
-}
-.cube2 .back{
-	background: url("images/nkss2.png") no-repeat;
-	background-size: 100% 300%;
-	background-position: 0px -200px;
-}
-.cube3 .back{
-	background: url("images/nkss2.png") no-repeat;
-	background-size: 100% 300%;
-	background-position: 0px -400px;
-}
-.cube .back{
-	background-color: gray;
-	height: 200px;
-	width: 600px;
-	transform: translateZ(-30px);
-}
-.cube .right{
-	background-color: gray;
-	height: 200px;
-	width: 60px;
-	transform: rotateY(90deg) translateZ(570px);
-	border-right: 1px solid black;
-}
-.cube .left{
-	background-color: gray;
-	height: 200px;
-	width: 60px;
-	transform: rotateY(-90deg) translateZ(30px);
-	border-left: 1px solid black;
-}
-.cube .up{
-	background-color: gray;
-	height: 60px;
-	width: 600px;
-	transform: rotateX(90deg) translateZ(30px);
-	border-left: 1px solid black;
-}
-.cube .down{
-	background-color: gray;
-	height: 60px;
-	width: 600px;
-	transform: rotateX(-90deg) translateZ(170px);
-	border-left: 1px solid black;
 }
 @keyframes rotating {
     0% {
@@ -110,20 +20,32 @@ img {
     	transform: rotateY(0deg);
     }
     20%{
-		transform: rotateY(-180deg) scale(0.6) rotateX(180deg);
+		transform: rotateY(-60deg) scale(0.6) rotateX(120deg);
+    }
+    30%{
+    	transform: rotateY(-120deg) scale(0.6) rotateX(240deg)
     }
     40%{
+    	transform: rotateY(-180deg) scale(0.6) rotateX(360deg);
+    }
+    50%{
     	transform: rotateY(-180deg) rotateX(360deg);
     }
     60%{
     	transform: rotateY(-180deg) rotateX(360deg);
     }
+    70%{
+    	transform: rotateY(-180deg) scale(0.6) rotateX(360deg);
+    }
     80%{
-    	transform: rotateY(-180deg) scale(0.6) rotateX(180deg);
+    	transform: rotateY(-240deg) scale(0.6) rotateX(480deg);
+    }
+    90%{
+    	transform: rotateY(-300deg) scale(0.6) rotateX(600deg);
     }
 
     100% {
-        transform: rotateY(-360deg) rotateX(360deg);
+        transform: rotateY(-360deg) rotateX(720deg)
     }
 }
 </style>
@@ -131,36 +53,96 @@ img {
 <body>
     <div class="container">
         <div class="img_container">
-            <!-- <img src="nkss1.jpeg" alt="nkss" /> -->
-        </div>
-        <div class="tran_container">
-            <div class="cube cube1">
-                <div class="front"></div>
-                <div class="back"></div>
-                <div class="up"></div>
-                <div class="down"></div>
-                <div class="right"></div>
-                <div class="left"></div>
-            </div>
-            <div class="cube cube2">
-                <div class="front"></div>
-                <div class="back"></div>
-                <div class="up"></div>
-                <div class="down"></div>
-                <div class="right"></div>
-                <div class="left"></div>
-            </div>
-            <div class="cube cube3">
-                <div class="front"></div>
-                <div class="back"></div>
-                <div class="up"></div>
-                <div class="down"></div>
-                <div class="right"></div>
-                <div class="left"></div>
-            </div>
+            <!-- <img id="pre_img" src="./images/nkss1.jpeg" alt="nkss" />
+            <img id="next_img" src="./images/nkss2.png" alt="nkss" /> -->
         </div>
     </div>
     <script>
+    	// 配置
+    	const WD = 5,//x方向分割
+    		  HD = 5, //y方向分割
+    		  DD = 10, //立体厚度
+    		  WIDTH = 600, //图片宽度
+    		  HEIGHT = 600;//图片高度
+    		  frontImg = "images/nkss1.jpeg",//前置图片
+    		  backImg = "images/nkss2.png",//后置图片
+    		  Anmiation = "rotating 10s linear infinite",//动画
+    		  AnmiationDelay = 0.2;
+    	var cube, up, down, left, right, front, back, i, j;
+    	var container = document.getElementsByClassName("container")[0];
+    	var trans_container = document.createElement("div");
+    	trans_container.style.width = WIDTH + "px";
+    	trans_container.style.height = HEIGHT + "px";
+    	trans_container.className = "tran_container";
+    	
+    	for(i = 0; i < HD; i++){
+    		for(j = 0; j < WD; j++){
+    			// cube配置
+    			cube = document.createElement("div");
+    			cube.className = "cube";
+    			cube.style.width = WIDTH/WD + "px";
+    			cube.style.height = HEIGHT/HD + "px";
+    			cube.style.display = "inline-block";
+    			cube.style["transform-style"] = "preserve-3d";
+    			cube.style.animation = Anmiation;
+    			cube.style["animation-delay"] = AnmiationDelay*Math.abs(WD - 1 - i - j)+"s";
+
+    			// up配置
+    			up = document.createElement("div");
+    			up.style.position = "absolute";
+    			up.style.width = WIDTH/WD + "px";
+    			up.style.height = DD + "px";
+    			up.style["background-color"] = "gray";
+    			up.style.transform = "rotateX(90deg) translateZ("+DD/2+"px)";
+    			cube.appendChild(up);
+    			// down配置
+    			down = document.createElement("div");
+    			down.style.position = "absolute";
+    			down.style.width = WIDTH/WD + "px";
+    			down.style.height = DD + "px";
+    			down.style["background-color"] = "gray";
+    			down.style.transform = "rotateX(-90deg) translateZ("+(HEIGHT/HD - DD/2) +"px)";
+    			cube.appendChild(down);
+    			// front配置
+    			front = document.createElement("div");
+    			front.style.position = "absolute";
+    			front.style.width = WIDTH/WD + "px";
+    			front.style.height = HEIGHT/HD + "px";
+    			front.style.background = "url(" + frontImg + ") no-repeat";
+    			front.style["background-size"] = WD+"00% "+HD+"00%";
+    			front.style["background-position"] = "-"+j*WIDTH/WD+"px -"+i*HEIGHT/HD+"px";
+    			front.style.transform = "translateZ("+DD/2+"px)";
+    			cube.appendChild(front);
+    			// back配置
+    			back = document.createElement("div");
+    			back.style.position = "absolute";
+    			back.style.width = WIDTH/WD + "px";
+    			back.style.height = HEIGHT/HD + "px";
+    			back.style.background = "url(" + backImg + ") no-repeat";
+    			back.style["background-size"] = WD+"00% "+HD+"00%";
+    			back.style["background-position"] = "-"+j*WIDTH/WD+"px -"+i*HEIGHT/HD+"px";
+    			back.style.transform = "rotateY(180deg) translateZ("+DD/2+"px)";
+    			cube.appendChild(back);
+    			// left配置
+    			left = document.createElement("div");
+    			left.style.position = "absolute";
+    			left.style.height = HEIGHT/HD + "px";
+    			left.style.width = DD + "px";
+    			left.style["background-color"] = "gray";
+    			left.style.transform = "rotateY(-90deg) translateZ("+DD/2+"px)";
+    			cube.appendChild(left);
+    			// right配置
+    			right = document.createElement("div");
+    			right.style.position = "absolute";
+    			right.style.height = HEIGHT/HD + "px";
+    			right.style.width = DD + "px";
+    			right.style["background-color"] = "gray";
+    			right.style.transform = "rotateY(90deg) translateZ("+(WIDTH/WD - DD/2)+"px)";
+    			cube.appendChild(right);
+    			trans_container.appendChild(cube);
+    		}
+    	}
+    	container.appendChild(trans_container);
     </script>
 </body>
 
