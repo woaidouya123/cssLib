@@ -59,15 +59,18 @@ img {
     </div>
     <script>
     	// 配置
-    	const WD = 5,//x方向分割
-    		  HD = 5, //y方向分割
+    	const WD = 10,//x方向分割
+    		  HD = 10, //y方向分割
     		  DD = 10, //立体厚度
     		  WIDTH = 600, //图片宽度
     		  HEIGHT = 600;//图片高度
     		  frontImg = "images/nkss1.jpeg",//前置图片
     		  backImg = "images/nkss2.png",//后置图片
     		  Anmiation = "rotating 10s linear infinite",//动画
-    		  AnmiationDelay = 0.2;
+    		  AnmiationDelay = 0.2;//动画延迟
+    	var DelayContrl = function(i, j){
+    		return AnmiationDelay*Math.abs(i-j);
+    		};
     	var cube, up, down, left, right, front, back, i, j;
     	var container = document.getElementsByClassName("container")[0];
     	var trans_container = document.createElement("div");
@@ -85,7 +88,7 @@ img {
     			cube.style.display = "inline-block";
     			cube.style["transform-style"] = "preserve-3d";
     			cube.style.animation = Anmiation;
-    			cube.style["animation-delay"] = AnmiationDelay*Math.abs(WD - 1 - i - j)+"s";
+    			cube.style["animation-delay"] = DelayContrl(i,j)+"s";
 
     			// up配置
     			up = document.createElement("div");
