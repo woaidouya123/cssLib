@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>xlsParse</title>
+    <meta charset="utf-8">
+
+	<script type="text/javascript" src="./xlsx.full.min.js"></script>
+    <script src="./FileSaver.js"></script>
+    
+    <script type="text/javascript" src="./DEPT.js"></script>
+</head>
+<body>
+<input type="file" id="file1"/>
+<input type="file" id="file2"/>
+<input type="button" id="compare3" value="保存sql" onclick="saveSql()"/>
+<script type="text/javascript">
+	// js读取解析Excel
+// 定义一个carData,用来保存读取到的数据
+var carData1, carData2;
+function getCifSeq(deptid){
+    for(var i=0;i<window.CifJson.RECORDS.length;i++){
+        if(window.CifJson.RECORDS[i].DEPTID == deptid){
+            return window.CifJson.RECORDS[i].DEPTSEQ;
+        }
+    }
+}
+window.onload = function(){
+
+       
+        var wb;//读取完成的数据
+        var rABS = false; //是否将文件读取为二进制字符串
+ 
+        function fixdata(data) { //文件流转BinaryString
+            var o = "",
+                l = 0,
+                w = 10240;
+            for(; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+            o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+            return o;
+        }
+ 
+        document.getElementById("file1").addEventListener("change",function(){
+            if(!this.files) {
+                return;
+            }
+            var f = this.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = e.target.result;
+                if(rABS) {
+                    wb = XLSX.read(btoa(fixdata(data)),{
+                        type: 'base64'
+                    });
+                } else {
+                    wb = XLSX.read(data,{
+                        type: 'binary'
+                    });
+                }
+                
+                // carData就是我们需要的JSON数据
+                carData1 = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                // console.log(vcarData1);   
+            };
+            if(rABS) {
+                reader.readAsArrayBuffer(f);
+            } else {
+                reader.readAsBinaryString(f);
+            }
+        })
+
+        document.getElementById("file2").addEventListener("change",function(){
+            if(!this.files) {
+                return;
+            }
+            var f = this.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = e.target.result;
+                if(rABS) {
+                    wb = XLSX.read(btoa(fixdata(data)),{
+                        type: 'base64'
+                    });
+                } else {
+                    wb = XLSX.read(data,{
+                        type: 'binary'
+                    });
+                }
+                
+                // carData就是我们需要的JSON数据
+                carData2 = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                // console.log(carData2);   
+            };
+            if(rABS) {
+                reader.readAsArrayBuffer(f);
+            } else {
+                reader.readAsBinaryString(f);
+            }
+        })
+ 
+    };
+
+    function saveSql(){
+        // var fso=new ActiveXObject("Scripting.FileSystemObject");
+        // var f=fso.createtextfile("D:\\test.sql",2,true);
+        // // f.writeLine("HELLO WORLD！");
+        var data = "",date = new Date();
+
+        for(var i=0;i<carData1.length;i++){
+            // 这里进行拼接数据
+        }
+        console.log(data);
+        var blob = new Blob([data], { type: "text/plain;charset=utf-8" });
+        saveAs(blob, "export.sql");
+    }
+
+</script>
+</body>
+</html>
