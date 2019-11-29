@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>geoTEST</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<script>
+// 		document.write("定位中...\n");
+// navigator.geolocation.getCurrentPosition(
+//     function(pos){
+// 　　　　document.write('用户定位数据获取成功' + '\n')
+// 　　　　//document.write(arguments);
+// 　　　　document.write('定位时间：',pos.timestamp + '\n')
+// 　　　　document.write('经度：',pos.coords.longitude + '\n')
+// 　　　　document.write('纬度：',pos.coords.latitude + '\n')
+// 　　　　document.write('海拔：',pos.coords.altitude + '\n')
+// 　　　　document.write('速度：',pos.coords.speed + '\n')
+ 
+// 	},    //定位成功的回调
+// 	function(err){ 
+// 	　　　　document.write('用户定位数据获取失败' + '\n')
+// 	　　　　//console.log(arguments);
+	 
+// 	}        //定位失败的回调
+// );
+function getLocation(){ 
+  if (navigator.geolocation){ 
+    navigator.geolocation.getCurrentPosition(showPosition,showError); 
+  }else{ 
+    alert("浏览器不支持地理定位。"); 
+  } 
+}
+function showPosition(position){
+   console.log(position); 
+   var lat = position.coords.latitude; //纬度 
+   var lag = position.coords.longitude; //经度 
+   console.log('纬度:'+lat+',经度:'+lag); 
+}
+function showError(error){ 
+  switch(error.code) { 
+    case error.PERMISSION_DENIED: 
+      alert("定位失败,用户拒绝请求地理定位"); 
+      break; 
+    case error.POSITION_UNAVAILABLE: 
+      alert("定位失败,位置信息是不可用"); 
+      break; 
+    case error.TIMEOUT: 
+      alert("定位失败,请求获取用户位置超时"); 
+      break; 
+    case error.UNKNOWN_ERROR: 
+      alert("定位失败,定位系统失效"); 
+      break; 
+  } 
+}
+getLocation();
+	</script>
+</body>
+</html>
