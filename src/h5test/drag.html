@@ -18,6 +18,17 @@
 			height: 400px;
 			border: 1px solid yellow;
 		}
+		#fileDiv{
+			position: absolute;
+			top: 100px;
+			left: 900px;
+			width: 400px;
+			height: 400px;
+			border: 1px solid green;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 	</style>
 </head>
 <body>
@@ -27,6 +38,7 @@
 <!-- </div> -->
 
 <div id="dropDiv"></div>
+<div id="fileDiv">file</div>
 <script>
 	var div = document.getElementById("dragMe"),
 		tip = document.getElementById("tip"),
@@ -37,20 +49,26 @@
 		console.log('start',e.target.id);
 		// e.dataTransfer.setData("x",e.clientX - e.target);
 	})
-	// dia.addEventListener("drop",function(ev){
-	// 	ev.preventDefault();
-	// 	tip.innerHTML = "放手...";
-	//     var data=ev.dataTransfer.getData("Text");
-	//     console.log(data);
-	//     ev.target.appendChild(document.getElementById(data));
-	// },false)
+	dia.addEventListener("drop",function(ev){
+		ev.preventDefault();
+		tip.innerHTML = "放手...";
+	    var data=ev.dataTransfer.getData("Text");
+	    console.log(data);
+	    ev.target.appendChild(document.getElementById(data));
+	},false)
 	document.body.addEventListener("dragover",function(ev){
 		ev.preventDefault();
 	})
-	document.body.addEventListener("drop",function(ev){
-		ev.preventDefault();
-		var data=ev.dataTransfer.getData("Text");
-	    console.log('end', data, document.getElementById(data));
+	// document.body.addEventListener("drop",function(ev){
+	// 	ev.preventDefault();
+	// 	var data=ev.dataTransfer.getData("Text");
+	//     console.log('end', data, document.getElementById(data));
+	// },false)
+	document.getElementById("fileDiv").addEventListener("drop",function(ev){
+		ev.stopPropagation();
+        ev.preventDefault();
+        var files = ev.dataTransfer.files;
+        this.innerHTML = files[0].name;
 	},false)
 </script>
 </body>
