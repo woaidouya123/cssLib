@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>slideBar</title>
+    <meta charset="utf-8">
+    <style>
+    html::-webkit-scrollbar{
+    	display: none;
+    }
+    #scrollDiv {
+        height: 2500px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #pointer {
+        width: 150px;
+        height: 30px;
+        position: fixed;
+        top: 10px;
+        right: 20px;
+        background: red;
+        text-align: center;
+	    line-height: 30px;
+	    color: white;
+    }
+
+    #pointer:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        border-left: 15px solid white;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+    }
+
+    #pointer:before {
+        content: "";
+        position: absolute;
+        right: -15px;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        border-left: 15px solid red;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="scrollDiv">
+        <span>开始</span>
+        <span>结束</span>
+    </div>
+    <div id="pointer">0%</div>
+    <script>
+    document.addEventListener("scroll", function(e) {
+        var ev = e || window.event;
+        var height = window.innerHeight - 50; //计算剩余高度
+        var pointer = document.getElementById("pointer");
+        var percents = window.scrollY/(document.body.offsetHeight-window.innerHeight);// 计算滑动百分比
+        percents = percents>1?1:percents;//差额取整
+        pointer.style["top"] = 10 + height * percents + "px";
+        pointer.innerHTML=Math.round(percents*100) + "%";
+    })
+    </script>
+</body>
+
+</html>
