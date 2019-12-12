@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DateSelect</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+    table.dataTable {
+        background: gray;
+        color: white;
+    }
+
+    table.dataTable > thead {
+        display: block;
+    }
+
+    table.dataTable > tbody {
+        display: block;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+        background-size: 92px 92px;
+        background-position: -92px -92px;
+        background-repeat: no-repeat;
+    }
+
+    table.dataTable > tbody > tr > td,
+    table.dataTable > thead > th {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        box-sizing: content-box;
+        border: 1px solid gray;
+        vertical-align: middle;
+        background-color: gray;
+        background-clip: content-box;
+        padding: 2px;
+    }
+    table.dataTable > tbody > tr > td > label{
+    	display: block;
+    	width: 100%;
+    	height: 100%;
+    }
+    table.dataTable > tbody > tr > td > label > span{
+		display: block;
+    	width: 100%;
+    	height: 100%;
+    	box-sizing: border-box;
+    	line-height: 0;
+    	padding: 20px 0;
+    }
+    
+    table.dataTable > tbody > tr > td > label > input:checked + span{
+    	border: 2px solid #000000;
+    	padding: 18px 0;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="dateDiv"></div>
+    <script type="text/javascript">
+    (function() {
+        // 初始化变量
+        const WeekLabel = ["日", "一", "二", "三", "四", "五", "六"],
+            PingDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+            RunDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        // 生成表格
+        var table = document.createElement("table");
+        table.className = "dataTable";
+        table.setAttribute("border", "0");
+        table.setAttribute("cellspacing", "0");
+
+        // 定义表头信息
+        var thead = document.createElement("thead");
+        WeekLabel.map(function(item) {
+            var th = document.createElement("th");
+            th.innerHTML = item;
+            thead.appendChild(th);
+        })
+        table.appendChild(thead);
+
+        // 对日期进行处理，这里获取当前月份
+        var curDate = new Date();
+        var year = curDate.getFullYear(),
+            mon = curDate.getMonth() + 1,
+            day = curDate.getDate(),
+            week = curDate.getDay();
+
+
+        // 计算当月月初和月末是周几
+        var start_space, end_space, mid_days;
+        start_space = new Date(year + "/" + mon + "/" + "01").getDay();
+        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
+            mid_days = RunDays[mon - 1];
+        } else {
+            mid_days = PingDays[mon - 1];
+        }
+        end_space = 6 - new Date(year + "/" + mon + "/" + mid_days).getDay();
+
+        // 日期数组拼接
+        var dateArray = Array.from({ "length": start_space }, (v, k) => "").concat(Array.from({ "length": mid_days }, (v, k) => k + 1), Array.from({ "length": end_space }, (v, k) => ""));
+
+        // console.log(year, mon, day, week, start_space, end_space, dateArray);
+
+        // 定义表格内信息
+        var tbody = document.createElement("tbody"),
+            i, tr, td, temp, input, span, label;
+        for (i = 0; i < dateArray.length / WeekLabel.length; i++) {
+            temp = dateArray.slice(i * WeekLabel.length, (i + 1) * WeekLabel.length);
+            tr = document.createElement("tr");
+            temp.map(function(item) {
+                td = document.createElement("td");
+                input = document.createElement("input");
+                input.setAttribute("type","radio");
+                input.setAttribute("name","date");
+                input.setAttribute("value",item);
+                item == day && (input.setAttribute("checked",true))
+                input.style.display = "none";
+                span = document.createElement("span");
+                span.innerHTML = item;
+                label = document.createElement("label");
+                // td.innerHTML = item;
+                label.appendChild(input);
+                label.appendChild(span);
+                td.appendChild(label);
+                tr.appendChild(td);
+            })
+            tbody.appendChild(tr);
+        }
+
+        tbody.addEventListener("mousemove", function(event) {
+            var ev = event || window.event;
+            ev.preventDefault();
+            this.style["background-position"] = (ev.clientX - this.offsetLeft - 40) + "px " +
+                (ev.clientY - this.offsetTop - 40) + "px";
+        }, true);
+        tbody.addEventListener("mouseout", function(event) {
+            var ev = event || window.event;
+            ev.preventDefault();
+            this.style["background-position"] = "-92px -92px";
+        }, true)
+        table.appendChild(tbody);
+        document.getElementById("dateDiv").appendChild(table);
+    })();
+    </script>
+</body>
+
+</html>
