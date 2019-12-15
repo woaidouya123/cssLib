@@ -14,12 +14,18 @@
         display: block;
     }
 
+    table.dataTable > tbody::-webkit-scrollbar{
+    	display: none;
+    }
+
     table.dataTable > tbody {
         display: block;
         background-image: radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
         background-size: 92px 92px;
         background-position: -92px -92px;
         background-repeat: no-repeat;
+        height: 276px;
+    	overflow: auto;
     }
 
     table.dataTable > tbody > tr > td,
@@ -82,28 +88,52 @@
         })
         table.appendChild(thead);
 
-        // 对日期进行处理，这里获取当前月份
-        var curDate = new Date();
-        var year = curDate.getFullYear(),
-            mon = curDate.getMonth() + 1,
-            day = curDate.getDate(),
-            week = curDate.getDay();
+        // 获取时间数组 yyyy/mm/dd
+        function getDateArray(start_date, end_date){
+        	// 对日期进行处理
+	        var startDate = new Date(start_date), endDate = new Date(end_date);
+	        var s_year = startDate.getFullYear(),
+	            s_mon = startDate.getMonth() + 1,
+	            s_day = startDate.getDate(),
+	            e_year = endDate.getFullYear(),
+	            e_mon = endDate.getMonth() + 1,
+	            e_day = endDate.getDate();
+	        // 计算当月月初和月末是周几
+	        var start_space, end_space, mid_days = [];
+	        start_space = new Date(s_year + "/" + s_mon + "/" + "01").getDay();
 
+	        curYear = s_year,curMon = s_mon;
+	        while(curYear < e_year || (curYear == e_year && curMon <= e_mon)){
+	        	if (curYear % 4 == 0 && curYear % 100 != 0 || curYear % 400 == 0) {
+		            mid_days.push(RunDays[curMon - 1]);
+		        } else {
+		        	mid_days.push(PingDays[curMon - 1]);
+		        }
+	        	curMon ++;
+	        	if(curMon > 12){
+	        		curYear++;
+	        		curMon=1;
+	        	}
+	        }
 
-        // 计算当月月初和月末是周几
-        var start_space, end_space, mid_days;
-        start_space = new Date(year + "/" + mon + "/" + "01").getDay();
-        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
-            mid_days = RunDays[mon - 1];
-        } else {
-            mid_days = PingDays[mon - 1];
+	        console.log(mid_days);
+	        
+	        end_space = 6 - new Date(e_year + "/" + e_mon + "/" + mid_days[mid_days.length-1]).getDay();
+
+	        // 日期数组拼接
+	        var res = Array.from({ "length": start_space }, (v, k) => "");
+	        mid_days.map(function(item){
+	        	res = res.concat(Array.from({ "length": item }, (v, k) => k + 1));
+	        })
+	        res = res.concat(Array.from({ "length": end_space }, (v, k) => ""));
+	        return res;
         }
-        end_space = 6 - new Date(year + "/" + mon + "/" + mid_days).getDay();
 
-        // 日期数组拼接
-        var dateArray = Array.from({ "length": start_space }, (v, k) => "").concat(Array.from({ "length": mid_days }, (v, k) => k + 1), Array.from({ "length": end_space }, (v, k) => ""));
+        
 
-        // console.log(year, mon, day, week, start_space, end_space, dateArray);
+
+        var dateArray = getDateArray("2018/11/01","2019/12/01")
+        console.log(dateArray);
 
         // 定义表格内信息
         var tbody = document.createElement("tbody"),
@@ -117,12 +147,10 @@
                 input.setAttribute("type","radio");
                 input.setAttribute("name","date");
                 input.setAttribute("value",item);
-                item == day && (input.setAttribute("checked",true))
                 input.style.display = "none";
                 span = document.createElement("span");
                 span.innerHTML = item;
                 label = document.createElement("label");
-                // td.innerHTML = item;
                 label.appendChild(input);
                 label.appendChild(span);
                 td.appendChild(label);
@@ -134,8 +162,8 @@
         tbody.addEventListener("mousemove", function(event) {
             var ev = event || window.event;
             ev.preventDefault();
-            this.style["background-position"] = (ev.clientX - this.offsetLeft - 40) + "px " +
-                (ev.clientY - this.offsetTop - 40) + "px";
+            this.style["background-position"] = (ev.clientX - this.parentNode.offsetLeft - 46) + "px " +
+                (ev.clientY - this.parentNode.offsetTop - 46 - 46) + "px";
         }, true);
         tbody.addEventListener("mouseout", function(event) {
             var ev = event || window.event;
