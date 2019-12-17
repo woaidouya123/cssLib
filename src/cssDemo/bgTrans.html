@@ -28,17 +28,27 @@
         background-image: url(../images/4.jpg);
         background-position: -100% -100%;
         background-repeat: no-repeat;
-        left: 100%;
-        top: 400px;
-        border-top-left-radius: 100%;
+        /*left: 100%;
+        top: 400px;*/
+        /*border-top-left-radius: 100%;*/
         z-index: 100;
     }
     </style>
 </head>
 
-<body>
+<body onscroll="scrollFun1();scrollFun2();scrollFun3();">
     <div style="height: 1000px;"></div>
-    <div class="bgTrans" id="scrollDiv">
+    <div class="bgTrans" id="scrollDiv1">
+        <div class="front"></div>
+        <div class="back"></div>
+    </div>
+    <div style="height: 200px;"></div>
+    <div class="bgTrans" id="scrollDiv2">
+        <div class="front"></div>
+        <div class="back"></div>
+    </div>
+    <div style="height: 200px;"></div>
+    <div class="bgTrans" id="scrollDiv3">
         <div class="front"></div>
         <div class="back"></div>
     </div>
@@ -46,12 +56,12 @@
     <script>
     (function() {
         var seeHeight = document.documentElement.clientHeight;
-        var div = document.getElementById("scrollDiv");
+        var div = document.getElementById("scrollDiv1");
         var front = div.children[0];
+        // 设定背景宽高
         front.style["background-size"] = div.offsetWidth + "px " + div.offsetHeight + "px";
-        window.onscroll = function(event) {
+        window.scrollFun1 = function(event) {
             var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-            console.log(div.offsetTop, scrollTop, div.offsetHeight, seeHeight)
             var percents;
             if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) < 0) {
                 if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) >= -1 * (seeHeight - div.offsetHeight)) {
@@ -62,12 +72,81 @@
             } else {
                 percents = 0;
             }
-            console.log(percents);
+
+            // 重置front宽高和位置
             front.style.left = 100 - percents + "%";
             front.style.top = div.offsetHeight - div.offsetWidth * percents / 100 + "px";
             front.style.width = percents + "%";
             front.style.height = div.offsetWidth * percents / 100 + "px";
+
+            // 计算角度，使动画效果更圆滑连贯
             front.style["border-top-left-radius"] = div.offsetWidth * percents / 100 < 
+            			div.offsetWidth - div.offsetHeight ? 100+"%":div.offsetWidth - div.offsetHeight+"px";
+            front.style["background-position"] = (div.offsetLeft - front.offsetLeft - 8) + "px " +
+             (div.offsetLeft - front.offsetTop - 8) + "px";
+        }
+    })();
+
+    (function() {
+        var seeHeight = document.documentElement.clientHeight;
+        var div = document.getElementById("scrollDiv2");
+        var front = div.children[0];
+        // 设定背景宽高
+        front.style["background-size"] = div.offsetWidth + "px " + div.offsetHeight + "px";
+        window.scrollFun2 = function(event) {
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var percents;
+            if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) < 0) {
+                if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) >= -1 * (seeHeight - div.offsetHeight)) {
+                    percents = (div.offsetTop - scrollTop - seeHeight + div.offsetHeight) / (seeHeight - div.offsetHeight) * (-1) * 100;
+                } else {
+                    percents = 100;
+                }
+            } else {
+                percents = 0;
+            }
+
+            // 重置front宽高和位置
+            front.style.left = 50 - percents/2 + "%";
+            front.style.top = div.offsetHeight/2 - div.offsetWidth * percents / 100 /2 + "px";
+            front.style.width = percents + "%";
+            front.style.height = div.offsetWidth * percents / 100 + "px";
+
+            // 计算角度，使动画效果更圆滑连贯
+            front.style["border-radius"] = div.offsetWidth * percents / 100 < 
+            			div.offsetWidth - div.offsetHeight ? 100+"%":div.offsetWidth/2 - div.offsetHeight/2+"px";
+            front.style["background-position"] = (div.offsetLeft - front.offsetLeft - 8) + "px " +
+             (div.offsetLeft - front.offsetTop - 8) + "px";
+        }
+    })();
+
+    (function() {
+        var seeHeight = document.documentElement.clientHeight;
+        var div = document.getElementById("scrollDiv3");
+        var front = div.children[0];
+        // 设定背景宽高
+        front.style["background-size"] = div.offsetWidth + "px " + div.offsetHeight + "px";
+        window.scrollFun3 = function(event) {
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var percents;
+            if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) < 0) {
+                if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) >= -1 * (seeHeight - div.offsetHeight)) {
+                    percents = (div.offsetTop - scrollTop - seeHeight + div.offsetHeight) / (seeHeight - div.offsetHeight) * (-1) * 100;
+                } else {
+                    percents = 100;
+                }
+            } else {
+                percents = 0;
+            }
+
+            // 重置front宽高和位置
+            front.style.right = 100 - percents + "%";
+            front.style.bottom = div.offsetHeight - div.offsetWidth * percents / 100 + "px";
+            front.style.width = percents + "%";
+            front.style.height = div.offsetWidth * percents / 100 + "px";
+
+            // 计算角度，使动画效果更圆滑连贯
+            front.style["border-bottom-right-radius"] = div.offsetWidth * percents / 100 < 
             			div.offsetWidth - div.offsetHeight ? 100+"%":div.offsetWidth - div.offsetHeight+"px";
             front.style["background-position"] = (div.offsetLeft - front.offsetLeft - 8) + "px " +
              (div.offsetLeft - front.offsetTop - 8) + "px";
