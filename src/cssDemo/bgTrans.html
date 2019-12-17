@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>bgTrans</title>
+    <meta charset="utf-8">
+    <style>
+    .bgTrans {
+        height: 400px;
+        position: relative;
+    }
+
+    .bgTrans div {
+        position: absolute;
+
+    }
+
+    .bgTrans div.back {
+        background-image: url(../images/3.jpg);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        height: 100%;
+        width: 100%;
+        z-index: 90;
+    }
+
+    .bgTrans div.front {
+        background-image: url(../images/4.jpg);
+        background-position: -100% -100%;
+        background-repeat: no-repeat;
+        left: 100%;
+        top: 400px;
+        border-top-left-radius: 100%;
+        z-index: 100;
+    }
+    </style>
+</head>
+
+<body>
+    <div style="height: 1000px;"></div>
+    <div class="bgTrans" id="scrollDiv">
+        <div class="front"></div>
+        <div class="back"></div>
+    </div>
+    <div style="height: 1000px;"></div>
+    <script>
+    (function() {
+        var seeHeight = document.documentElement.clientHeight;
+        var div = document.getElementById("scrollDiv");
+        var front = div.children[0];
+        front.style["background-size"] = div.offsetWidth + "px " + div.offsetHeight + "px";
+        window.onscroll = function(event) {
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            console.log(div.offsetTop, scrollTop, div.offsetHeight, seeHeight)
+            var percents;
+            if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) < 0) {
+                if ((div.offsetTop - scrollTop - seeHeight + div.offsetHeight) >= -1 * (seeHeight - div.offsetHeight)) {
+                    percents = (div.offsetTop - scrollTop - seeHeight + div.offsetHeight) / (seeHeight - div.offsetHeight) * (-1) * 100;
+                } else {
+                    percents = 100;
+                }
+            } else {
+                percents = 0;
+            }
+            console.log(percents);
+            front.style.left = 100 - percents + "%";
+            front.style.top = div.offsetHeight - div.offsetWidth * percents / 100 + "px";
+            front.style.width = percents + "%";
+            front.style.height = div.offsetWidth * percents / 100 + "px";
+            front.style["border-top-left-radius"] = div.offsetWidth * percents / 100 < 
+            			div.offsetWidth - div.offsetHeight ? 100+"%":div.offsetWidth - div.offsetHeight+"px";
+            front.style["background-position"] = (div.offsetLeft - front.offsetLeft - 8) + "px " +
+             (div.offsetLeft - front.offsetTop - 8) + "px";
+        }
+    })();
+    </script>
+</body>
+
+</html>
