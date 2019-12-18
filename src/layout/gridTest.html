@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    body {
+        counter-reset: section1;
+        counter-reset: section;
+    }
+
+    .container {
+        display: inline-grid;
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+        grid-gap: 1px 1px;
+        grid-template-areas:
+            'a b c'
+            'd e f'
+            'g h i';
+        place-items: center center;
+        place-content: center center;
+    }
+
+    .container>div {
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        padding: 50px 0;
+        box-sizing: border-box;
+        counter-increment: section1;
+        background-image: url(../images/nkss2.png);
+        background-size: 300% 300%;
+    }
+
+    .container>div:last-child {
+        background: transparent;
+    }
+
+    .container>div>span {
+        line-height: 0px;
+        display: block;
+    }
+
+    /*span::before {
+        counter-increment: section;
+        content: counter(section);
+    }*/
+
+    #success {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 304px;
+        height: 304px;
+        background-color: rgba(128, 128, 128, 0.5);
+        color: white;
+        z-index: -1;
+        transition: z-index 2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+    </style>
+</head>
+
+<body>
+    <div style="position: relative;">
+        <div class="container" id="content">
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+            <div>
+                <span></span>
+            </div>
+        </div>
+        <div id="success"></div>
+    </div>
+    <script>
+    var AlphaBeta = "abcdefghi";
+    var divs = document.getElementById("content").children;
+    var emptyNode = divs[8];
+    var emptyFlag = 'i';
+    var IsGameOver = false;
+    var startTime = new Date();
+    for (var i = 0; i < divs.length; i++) {
+        divs[i].style["grid-area"] = AlphaBeta[i];
+        divs[i].style["background-position"] = -1 * (i % 3) * 100 + "% " + -1 * Math.floor(i / 3) * 100 + "%";
+        divs[i].addEventListener("click", function(event) {
+            console.log(getMovePos(emptyFlag), this.style.gridRowStart);
+            if (getMovePos(emptyFlag).indexOf(this.style.gridRowStart) > -1) {
+                emptyNode.style["grid-area"] = this.style["grid-area"];
+                this.style["grid-area"] = emptyFlag;
+                emptyFlag = emptyNode.style.gridRowStart;
+                if (checkFinished()) {
+                    IsGameOver = true;
+                    successAnimation();
+                }
+            }
+
+        })
+    }
+    randomLayut(100);
+    document.onkeydown = function(e){
+        if(IsGameOver)return;
+        var code = e.keyCode || e.which, 
+            pos = getMovePos(emptyFlag),
+            node;
+        if (pos[code-37] != undefined) {
+                node = [...divs].filter(function(item) {
+                        return item.style.gridRowStart == pos[code-37];
+                    })
+                emptyNode.style["grid-area"] = node[0].style["grid-area"];
+                node[0].style["grid-area"] = emptyFlag;
+                emptyFlag = emptyNode.style.gridRowStart;
+                if (checkFinished()) {
+                    IsGameOver = true;
+                    successAnimation();
+                }
+            }
+    }
+
+    // 检验完成方法
+    function checkFinished() {
+        for (var i = 0; i < divs.length; i++) {
+            if (divs[i].style.gridRowStart != AlphaBeta[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 完成动画
+    function successAnimation(){
+        var successBg = document.getElementById("success");
+        successBg.style.zIndex = 99;
+        success.innerHTML = getGameTime();
+    }
+
+    // 获取游戏时间方法
+    function getGameTime(){
+        var currentTime = new Date();
+        var padding = parseInt((currentTime.getTime() - startTime.getTime())/1000);
+        return "用时" + (Math.floor(padding/60)) +
+                 "分" + (padding%60) + "秒";
+    }
+
+    // 打乱方法
+    function randomLayut(step) {
+        var pos, ran, node, preNodeFlag;
+        while (step > 0) {
+            pos = getMovePos(emptyFlag);
+            ran = Math.floor((Math.random() * pos.length));
+            while (pos[ran] == undefined || pos[ran] == preNodeFlag) {
+                ran = Math.floor((Math.random() * pos.length));
+            }
+            console.log(pos[ran]);
+            node = [...divs].filter(function(item) {
+                return item.style.gridRowStart == pos[ran];
+            })
+            emptyNode.style["grid-area"] = node[0].style["grid-area"];
+            node[0].style["grid-area"] = emptyFlag;
+            preNodeFlag = emptyFlag;
+            emptyFlag = emptyNode.style.gridRowStart;
+
+            step--;
+        }
+    }
+
+
+    // 计算可移动的方块位置
+    function getMovePos(empty) {
+        var pos = AlphaBeta.indexOf(empty);
+        if (pos % 3 == 0) {
+            return [AlphaBeta[pos + 1],AlphaBeta[pos + 3],undefined,AlphaBeta[pos - 3]];
+        } else if (pos % 3 == 1) {
+            return [AlphaBeta[pos + 1],AlphaBeta[pos + 3],  AlphaBeta[pos - 1], AlphaBeta[pos - 3]];
+        } else {
+            return [undefined, AlphaBeta[pos + 3], AlphaBeta[pos - 1], AlphaBeta[pos - 3]];
+        }
+    }
+    </script>
+</body>
+
+</html>
