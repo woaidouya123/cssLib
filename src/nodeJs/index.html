@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>图片拖拽</title>
+	<meta charset="utf-8">
+	<style>
+		#dragFileDiv{
+			position: relative;
+			    background-color: white;
+			    width: 900px;
+			    height: 600px;
+			    box-sizing: content-box;
+			    overflow: hidden;
+			    border: 5px dotted;
+			    border-radius: 10px;
+			    margin: 0 auto;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+		}
+		#dragFileDiv > canvas{
+			    position: absolute;
+			    left: 0px;
+			    top: 0px;
+		}
+		#dragFileDiv > span{
+			position: absolute;
+			z-index: 20;
+		}
+		#axios{
+			position: absolute;
+			display: grid;
+			z-index: -2;
+		}
+		#axios > div{
+			height: 100px;
+			width: 100px;
+			background-color: rgba(0,0,0,0.3);
+		}
+	</style>
+</head>
+<body>
+	<div id="dragFileDiv">
+		<canvas id="img_canvas"
+		 width="900" height="600">您的浏览器不支持canvas</canvas>
+		<span id="tips">拖拽文件上传</span>
+		<div id="axios"></div>
+	</div>
+	<br/>
+	<button onclick="save()">保存</button>
+	<script>
+		// 生成坐标框
+		var axios = document.getElementById("axios");
+		var border = 4,gap=1,i,dom;
+		axios.style["grid-template-columns"] = "repeat("+border+",100px)";
+        axios.style["grid-template-rows"] = "repeat("+border+",100px)";
+        axios.style["grid-gap"] = gap + "px " + gap + "px";
+        axios.style.width = border*100+ gap*(border-1) + "px";
+        axios.style.height = border*100+ gap*(border-1) + "px";
+        for(i=0;i<Math.pow(border,2);i++){
+        	dom = document.createElement("div");
+        	axios.appendChild(dom);
+        }
+
+        // 坐标拖动
+        var startX,startY,canvas_left = canvas_top = 0,IsMove = false;
+        var filename="png";
+
+
+		var xmlHttp; //ajax请求状态码0
+		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+
+		var canvas = document.getElementById("img_canvas");
+		var tips = document.getElementById("tips");
+		var ctx=canvas.getContext("2d");
+		document.body.addEventListener("dragover",function(ev){
+			ev.preventDefault();
+		})
+		document.getElementById("dragFileDiv").addEventListener("drop",function(ev){
+			ev.stopPropagation();
+	        ev.preventDefault();
+	        var files = ev.dataTransfer.files;
+	        console.log(files);
+	        if(!/\.(png|jpg|jpeg|gif)$/.test(files[0].name)){
+	        	alert("请选择图片格式的文件！")
+	        }
+			//2.为引擎对象绑定监听事件 (设置回调函数)
+			xmlhttp.onreadystatechange = function(){
+				//等待服务器响应
+				if(xmlhttp.readyState==4){
+					//当请求状态为4时，说明请求完成
+					if(xmlhttp.status==200){
+						//判断服务器响应状态吗是否正常
+						//取出响应的数据
+						var result = xmlhttp.responseText;
+						//将数据通过JS添加到页面
+						console.log(result);
+						var img = document.createElement("img");
+				        img.src = JSON.parse(result).filename;
+				        filename = JSON.parse(result).filename;
+				        filename = filename.substring(0,filename.lastIndexOf("."));
+				        img.onload = function(){
+				        	var scale = this.width/this.height;
+				        	if(this.width < this.height){
+				        		if(this.width < 600){
+				        			this.width = 600;
+				        			this.height = this.width/scale;
+				        		}
+				        		// if(this.height > 900){
+				        		// 	this.height = 900;
+				        		// 	this.width = this.height*scale;
+				        		// }
+				        		
+				        	}else{
+								if(this.height < 600){
+				        			this.height = 600;
+				        			this.width = this.height*scale;
+				        		}
+				        		// if(this.width > 900){
+				        		// 	this.width = 900;
+				        		// 	this.height = this.width/scale;
+				        		// }
+				        	}
+				        	console.log(this.width,this.height)
+				        	canvas.width = this.width;
+				        	canvas.height = this.height;
+				        	ctx.drawImage(this,0,0,this.width,this.height);
+				        	tips.style.zIndex="-1";
+				        	axios.style.zIndex = "21";
+				        }
+					}
+				}
+			}
+			//3.绑定服务器地址
+			//第一个参数：请求方式GET/POST
+			//第二个参数：后台服务器地址
+			//第三个参数：是否是异步 true--异步   false--同步
+			xmlhttp.open("POST", "/file_upload", true);
+			// xmlhttp.setRequestHeader("Content-type","multipart/form-data");
+			//4.发送请求
+			var formDate = new FormData();
+			formDate.append("file",files[0])
+			xmlhttp.send(formDate);
+
+	        
+		},false)
+		canvas.addEventListener("mousedown",function(event){
+			var ev = event || window.event;
+			startX = ev.clientX;
+			startY = ev.clientY;
+			IsMove = true;
+		})
+		canvas.addEventListener("mousemove",function(event){
+			var ev = event || window.event;
+			if(IsMove){
+				this.style.left = canvas_left + ev.clientX - startX + "px";
+				this.style.top = canvas_top + ev.clientY - startY + "px";
+			}
+		})
+		canvas.addEventListener("mouseup",function(event){
+			var ev = event || window.event;
+			canvas_left = canvas.offsetLeft + ev.clientX - startX;
+			canvas_top = canvas.offsetTop + ev.clientY - startY;
+			console.log("mouseup",canvas_left,canvas_top)
+			IsMove = false;
+		})
+		// 支持触摸板停止
+		canvas.addEventListener("touchend",function(event){
+			var ev = event || window.event;
+			canvas_left = canvas_left + ev.clientX - startX;
+			canvas_top = canvas_top + ev.clientY - startY;
+			console.log("touchend",canvas_left,canvas_top)
+			IsMove = false;
+		})
+
+		// 保存
+		function save(){
+			console.log(axios.offsetLeft - canvas.offsetLeft,axios.offsetTop - canvas.offsetTop,
+				axios.offsetWidth,axios.offsetHeight);
+			var imgData = ctx.getImageData(
+				axios.offsetLeft - canvas.offsetLeft,
+				axios.offsetTop - canvas.offsetTop,
+				axios.offsetWidth,
+				axios.offsetHeight
+				)
+			console.log(imgData);
+			var newCanvas = document.createElement("canvas");
+			newCanvas.width = axios.offsetWidth;
+			newCanvas.height = axios.offsetHeight;
+			var newCtx = newCanvas.getContext("2d");
+			newCtx.putImageData(imgData,0,0);
+			console.log(newCanvas.toDataURL("image/jpeg"),base64toFile(newCanvas.toDataURL("image/jpeg")));
+
+			//2.为引擎对象绑定监听事件 (设置回调函数)
+			xmlhttp.onreadystatechange = function(){
+				//等待服务器响应
+				if(xmlhttp.readyState==4){
+					//当请求状态为4时，说明请求完成
+					if(xmlhttp.status==200){
+						//判断服务器响应状态吗是否正常
+						//取出响应的数据
+						var result = xmlhttp.responseText;
+						//将数据通过JS添加到页面
+						console.log(result);
+						var img = document.createElement("img");
+				        img.src = JSON.parse(result).filename;
+				        img.onload = function(){
+				        	canvas.width = this.width;
+				        	canvas.height = this.height;
+				        	ctx.drawImage(this,0,0,this.width,this.height);
+				        	canvas.style.left = axios.offsetLeft + "px";
+				        	canvas.style.top = axios.offsetTop + "px";
+				        	axios.style.zIndex = "-2";
+				        }
+					}
+				}
+			}
+			xmlhttp.open("POST", "/file_save", true);
+			var formDate = new FormData();
+			formDate.append("file",base64toFile(newCanvas.toDataURL("image/jpeg")))
+			xmlhttp.send(formDate);
+
+		}
+
+		function base64toFile(dataurl){
+			var arr = dataurl.split(",");
+			var mime = arr[0].match(/:(.*?);/)[1];
+			var suffix = mime.split("/")[1];
+			var bstr = atob(arr[1]);
+			var n = bstr.length;
+			var u8arr = new Uint8Array(n);
+			while(n--){
+				u8arr[n] = bstr.charCodeAt(n)
+			}
+			return new File([u8arr],filename+"."+suffix,{type:mime})
+		}
+	</script>
+</body>
+</html>

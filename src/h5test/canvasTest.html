@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>图片拖拽</title>
+	<meta charset="utf-8">
+	<style>
+		#dragFileDiv{
+			width: 500px;
+		    height: 400px;
+		    border: 5px dashed;
+		    border-radius: 30px;
+		}
+	</style>
+</head>
+<body>
+	<div id="dragFileDiv">
+		<canvas id="img_canvas" width="500" height="400">您的浏览器不支持canvas</canvas>
+	</div>
+	<script>
+		var canvas = document.getElementById("img_canvas");
+		var ctx=canvas.getContext("2d");
+		document.body.addEventListener("dragover",function(ev){
+			ev.preventDefault();
+		})
+		document.getElementById("dragFileDiv").addEventListener("drop",function(ev){
+			ev.stopPropagation();
+	        ev.preventDefault();
+	        var files = ev.dataTransfer.files;
+	        console.log(files);
+	        if(!/\.(png|jpg|jpeg|gif)$/.test(files[0].name)){
+	        	alert("请选择图片格式的文件！")
+	        }
+
+	        var xmlHttp; //ajax请求状态码0
+			if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+				xmlhttp = new XMLHttpRequest();
+			} else {// code for IE6, IE5
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			//2.为引擎对象绑定监听事件 (设置回调函数)
+			xmlhttp.onreadystatechange = function(){
+				//等待服务器响应
+				if(xmlhttp.readyState==4){
+					//当请求状态为4时，说明请求完成
+					if(xmlhttp.status==200){
+						//判断服务器响应状态吗是否正常
+						//取出响应的数据
+						var result = xmlhttp.responseText;
+						//将数据通过JS添加到页面
+						console.log(result)
+					}
+				}
+			}
+			//3.绑定服务器地址
+			//第一个参数：请求方式GET/POST
+			//第二个参数：后台服务器地址
+			//第三个参数：是否是异步 true--异步   false--同步
+			xmlhttp.open("POST", "/file_upload", true);
+			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			//4.发送请求
+			var formDate = new FormData();
+			formDate.append("file",files[0])
+			xmlhttp.send(formDate);
+
+	        // var img = document.createElement("img");
+	        // img.src = ""+img_path;
+	        // img.onload = function(){
+	        // 	ctx.drawImage(this,0,0);
+	        // }
+		},false)
+	</script>
+</body>
+</html>
