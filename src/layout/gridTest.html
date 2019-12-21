@@ -55,8 +55,6 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 304px;
-        height: 304px;
         background-color: rgba(128, 128, 128, 0.5);
         color: white;
         z-index: -1;
@@ -85,53 +83,145 @@
         100%{left:101px;}
         
     }
+    @keyframes btn_start{
+        0%{
+            transform: rotateZ(0deg);
+            width: 50px;
+            height: 50px;
+        }
+        100%{
+           transform: rotateZ(360deg);
+            width: 0px;
+            height: 0px; 
+        }
+        
+    }
+    @keyframes span_clock{
+        0%{
+            font-size: 20px;
+        }
+        50%{
+           font-size: 40px; 
+        }
+        100%{
+           font-size: 20px; 
+        }
+        
+    }
+    .op{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: 100;
+        background-color: rgba(128, 128, 128, 0.5);
+    }
+    .op button.start{
+        width: 40px;
+        height: 40px;
+        outline: none;
+        border: none;
+        background-image: url(../images/start_w.svg);
+        background-color: transparent;
+        background-size: 100% 100%;
+        background-position: center center;
+    }
+    .op button:hover,button.restart:hover{
+        width: 50px;
+        height: 50px;
+    }
+    .op button:focus,button.restart:focus{
+        animation:btn_start 1.2s linear;
+    }
+    .op .clock{
+        color: white;
+    }
+    button.restart{
+        width: 40px;
+        height: 40px;
+        outline: none;
+        border: none;
+        background-image: url(../images/restart_w.svg);
+        background-color: transparent;
+        background-size: 90% 90%;
+        background-position: center center;
+    }
     </style>
 </head>
 
 <body>
-    <div style="position: relative;">
+    <div style="position: relative;width: fit-content;margin: 0 auto;">
         <div class="container" id="content">
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
-            <div>
-                <span></span>
-            </div>
+            
         </div>
-        <div id="success"></div>
+        <!-- <div id="success">
+            <button class="restart" id="restart" onclick="gameStart()"></button>
+            <span class="text"></span>
+        </div> -->
+        <div class="op" id="opanel">
+            <button class="start" id="start" onclick="gameStart()"></button>
+            <button class="restart" id="restart" style="display: none;" onclick="gameStart()"></button>
+            <span class="clock" id="clock" style="display: none;"></span>
+        </div>
     </div>
     <script>
-    var AlphaBeta = "abcdefghi", Animations = ["left","up","right","down"];
+
+    // 配置属性
+    const COUNTS = [9,16,25,36],
+          ALPHABETA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJ",
+          Animations = ["left","up","right","down"];
+    var SELECTED = COUNTS[0];
+
+    // 布局配置
+    var BORDER = Math.sqrt(SELECTED),
+        AlphaBeta = ALPHABETA.substring(0,SELECTED);
+    // 页面配置
+    var DIVWIDTH = 100,BORDERWIDTH = 1;
+
+    // 创建节点
+    (function(){
+        var container = document.getElementById("content"),div;
+        container.style["grid-template-areas"] = (function(){
+            var res = "",i,j;
+            for(i=0;i<BORDER;i++){
+                res += "'";
+                for(j=0;j<BORDER;j++){
+                    res += AlphaBeta.substring(i*BORDER+j,i*BORDER+j+1) + " ";
+                }
+                res += "'";
+            }
+            return res;
+        })();
+        container.style["grid-template-columns"] = "repeat("+BORDER+",100px)";
+        container.style["grid-template-rows"] = "repeat("+BORDER+",100px)";
+        container.style["grid-gap"] = BORDERWIDTH + "px " + BORDERWIDTH + "px";
+        for(var i=0;i<SELECTED;i++){
+            div = document.createElement("div");
+            div.style["grid-area"] = AlphaBeta[i];
+            div.style["background-size"] = BORDER*100+"% " + BORDER*100 + "%";
+            div.style["background-position"] = -1 * (i % BORDER) * 100 + "% " +
+             -1 * Math.floor(i / BORDER) * 100 + "%";
+            container.appendChild(div)
+        }
+
+        // 背景
+        // var successBg = document.getElementById("success");
+        // successBg.style.width = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+        // successBg.style.height = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+        var opanelBg = document.getElementById("opanel");
+        opanelBg.style.width = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+        opanelBg.style.height = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+    })();
     var divs = document.getElementById("content").children;
-    var emptyNode = divs[8];
-    var emptyFlag = 'i';
+    var emptyNode = divs[SELECTED-1];
+    var emptyFlag = AlphaBeta[SELECTED-1];
     var AnimationFlag = false;
-    var IsGameOver = false;
-    var startTime = new Date();
+    var IsGameOver = true;
+    var startTime;
     for (var i = 0; i < divs.length; i++) {
-        divs[i].style["grid-area"] = AlphaBeta[i];
-        divs[i].style["background-position"] = -1 * (i % 3) * 100 + "% " + -1 * Math.floor(i / 3) * 100 + "%";
         divs[i].addEventListener("animationend",function(){
             emptyNode.style["grid-area"] = this.style["grid-area"];
             this.style["grid-area"] = emptyFlag;
@@ -148,8 +238,8 @@
         divs[i].addEventListener("click", function(event) {
             var index = getMovePos(emptyFlag).indexOf(this.style.gridRowStart);
             if (!AnimationFlag && index > -1) {
-                console.log(Animations[index] + " 1s linear");
-                this.style.animation = Animations[index] + " 0.3s linear";
+                // console.log(Animations[index] + " 1s linear");
+                this.style.animation = Animations[index] + " 0.1s linear";
                 AnimationFlag = true;
             }
 
@@ -157,15 +247,15 @@
     }
     randomLayut(100);
     document.onkeydown = function(e){
-        if(IsGameOver)return;
+        if(IsGameOver&&AnimationFlag)return;
         var code = e.keyCode || e.which, 
             pos = getMovePos(emptyFlag),
             node;
-        if (!AnimationFlag && pos[code-37] != undefined) {
+        if (pos[code-37] != undefined) {
                 node = [...divs].filter(function(item) {
                         return item.style.gridRowStart == pos[code-37];
                     })
-                node[0].style.animation = Animations[code-37] + " 0.3s linear";
+                node[0].style.animation = Animations[code-37] + " 0.1s linear";
                 AnimationFlag = true;
                 if (checkFinished()) {
                     IsGameOver = true;
@@ -186,9 +276,11 @@
 
     // 完成动画
     function successAnimation(){
-        var successBg = document.getElementById("success");
-        successBg.style.zIndex = 99;
-        success.innerHTML = getGameTime();
+        var opanelBg = document.getElementById("opanel");
+        opanelBg.style.zIndex = 99;
+        opanelBg.children[1].style.display = "block";
+        opanelBg.children[2].style.display = "inline-block";
+        opanelBg.children[2].innerHTML = getGameTime();
     }
 
     // 获取游戏时间方法
@@ -225,13 +317,46 @@
     // 计算可移动的方块位置
     function getMovePos(empty) {
         var pos = AlphaBeta.indexOf(empty);
-        if (pos % 3 == 0) {
-            return [AlphaBeta[pos + 1],AlphaBeta[pos + 3],undefined,AlphaBeta[pos - 3]];
-        } else if (pos % 3 == 1) {
-            return [AlphaBeta[pos + 1],AlphaBeta[pos + 3],  AlphaBeta[pos - 1], AlphaBeta[pos - 3]];
+        if (pos % BORDER == 0) {
+            return [AlphaBeta[pos + 1],AlphaBeta[pos + BORDER],undefined,AlphaBeta[pos - BORDER]];
+        } else if (pos % BORDER == (BORDER - 1)) {
+            return [undefined, AlphaBeta[pos + BORDER], AlphaBeta[pos - 1], AlphaBeta[pos - BORDER]];
+            
         } else {
-            return [undefined, AlphaBeta[pos + 3], AlphaBeta[pos - 1], AlphaBeta[pos - 3]];
+            return [AlphaBeta[pos + 1],AlphaBeta[pos + BORDER],  AlphaBeta[pos - 1], AlphaBeta[pos - BORDER]];
         }
+    }
+
+    // 开始游戏
+    function gameStart(){
+        var op = document.getElementById("opanel");
+        var st = setTimeout(function(){
+            op.children[0].style.display = "none";
+            op.children[1].style.display = "none";
+            op.children[2].innerHTML = "3";
+            op.children[2].style.display = "block";
+            op.children[2].style.animation = "span_clock 1s linear";
+            op.children[2].addEventListener("animationend",function(e){
+                this.style.animation = "";
+                if(parseInt(this.innerHTML) >= 1){
+                    this.innerHTML = this.innerHTML - 1 || "Go";
+                    var self = this;
+                    var st = setTimeout(function(){
+                        self.style.animation = "span_clock 1s linear";
+                        clearTimeout(st);
+                    },0)
+                    
+                }else{
+                    this.innerHTML = "";
+                    this.parentNode.style.zIndex = "-1";
+                    startTime = new Date();
+                }
+                
+
+            })
+            clearTimeout(st);
+        },1000)
+        
     }
     </script>
 </body>
