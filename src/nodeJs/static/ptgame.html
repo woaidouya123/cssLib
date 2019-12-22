@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    body {
+        counter-reset: section1;
+        counter-reset: section;
+    }
+
+    .container {
+        display: inline-grid;
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+        grid-gap: 1px 1px;
+        grid-template-areas:
+            'a b c'
+            'd e f'
+            'g h i';
+        place-items: center center;
+        place-content: center center;
+    }
+
+    .container>div {
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        padding: 50px 0;
+        box-sizing: border-box;
+        counter-increment: section1;
+        background-image: url(../images/nkss2.png);
+        background-size: 300% 300%;
+        position: relative;
+    }
+
+    .container>div:last-child {
+        background: transparent;
+    }
+
+    .container>div>span {
+        line-height: 0px;
+        display: block;
+    }
+
+    /*span::before {
+        counter-increment: section;
+        content: counter(section);
+    }*/
+
+    #success {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(128, 128, 128, 0.5);
+        color: white;
+        z-index: -1;
+        transition: z-index 2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+    @keyframes up{
+        0%{top: 0px;}
+        100%{top:-101px;}
+    }
+    @keyframes down{
+        0%{top: 0px;}
+        100%{top:101px;}
+    }
+    @keyframes left{
+        0%{left: 0px;}
+        
+        100%{left:-101px;}
+        
+    }
+    @keyframes right{
+        0%{left: 0px;}
+        100%{left:101px;}
+        
+    }
+    @keyframes btn_start{
+        0%{
+            transform: rotateZ(0deg);
+            width: 50px;
+            height: 50px;
+        }
+        100%{
+           transform: rotateZ(360deg);
+            width: 0px;
+            height: 0px; 
+        }
+        
+    }
+    @keyframes span_clock{
+        0%{
+            font-size: 20px;
+        }
+        50%{
+           font-size: 40px; 
+        }
+        100%{
+           font-size: 20px; 
+        }
+        
+    }
+    .op{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: 100;
+        background-color: rgba(128, 128, 128, 0.5);
+    }
+    .op button.start{
+        width: 40px;
+        height: 40px;
+        outline: none;
+        border: none;
+        background-image: url(../images/start_w.svg);
+        background-color: transparent;
+        background-size: 100% 100%;
+        background-position: center center;
+    }
+    .op button:hover,button.restart:hover{
+        width: 50px;
+        height: 50px;
+    }
+    .op button:focus,button.restart:focus{
+        animation:btn_start 1.2s linear;
+    }
+    .op .clock{
+        color: white;
+    }
+    button.restart{
+        width: 40px;
+        height: 40px;
+        outline: none;
+        border: none;
+        background-image: url(../images/restart_w.svg);
+        background-color: transparent;
+        background-size: 90% 90%;
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+    .panel{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position: relative;width: fit-content;margin: 0 auto;">
+        <div class="container" id="content">
+            
+        </div>
+        <!-- <div id="success">
+            <button class="restart" id="restart" onclick="gameStart()"></button>
+            <span class="text"></span>
+        </div> -->
+        <div class="op" id="opanel">
+            <button class="start" id="start" onclick="gameStart()"></button>
+            <button class="restart" id="restart" style="display: none;" onclick="gameStart()"></button>
+            <span class="clock" id="clock" style="display: none;"></span>
+        </div>
+    </div>
+    <div class="panel">
+        <a href="/static/uploadFile.html">自定义图片</a>
+    </div>
+    
+    <script>
+
+    // 配置属性
+    const COUNTS = [9,16,25,36],
+          ALPHABETA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJ",
+          Animations = ["left","up","right","down"];
+    var SELECTED = COUNTS[0];
+
+    // 布局配置
+    var BORDER = Math.sqrt(SELECTED),
+        AlphaBeta = ALPHABETA.substring(0,SELECTED);
+    // 页面配置
+    var DIVWIDTH = 100,BORDERWIDTH = 1;
+
+    // 图片加载
+    var IMGPATH = sessionStorage.getItem("filename") || "/images/nkss2.png";
+    sessionStorage.setItem("divcounts",SELECTED);
+
+    // 创建节点
+    (function(){
+        var container = document.getElementById("content"),div;
+        container.style["grid-template-areas"] = (function(){
+            var res = "",i,j;
+            for(i=0;i<BORDER;i++){
+                res += "'";
+                for(j=0;j<BORDER;j++){
+                    res += AlphaBeta.substring(i*BORDER+j,i*BORDER+j+1) + " ";
+                }
+                res += "'";
+            }
+            return res;
+        })();
+        container.style["grid-template-columns"] = "repeat("+BORDER+",100px)";
+        container.style["grid-template-rows"] = "repeat("+BORDER+",100px)";
+        container.style["grid-gap"] = BORDERWIDTH + "px " + BORDERWIDTH + "px";
+        for(var i=0;i<SELECTED;i++){
+            div = document.createElement("div");
+            div.style["grid-area"] = AlphaBeta[i];
+            i<SELECTED-1 && (div.style["background-image"] = "url("+IMGPATH+")");
+            div.style["background-size"] = BORDER*100+"% " + BORDER*100 + "%";
+            div.style["background-position"] = -1 * (i % BORDER) * 100 + "% " +
+             -1 * Math.floor(i / BORDER) * 100 + "%";
+            container.appendChild(div)
+        }
+
+        // 背景
+        // var successBg = document.getElementById("success");
+        // successBg.style.width = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+        // successBg.style.height = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+        var opanelBg = document.getElementById("opanel");
+        opanelBg.style.width = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+        opanelBg.style.height = DIVWIDTH * BORDER + (BORDER - 1) * BORDERWIDTH + "px"
+    })();
+    var divs = document.getElementById("content").children;
+    var emptyNode = divs[SELECTED-1];
+    var emptyFlag = AlphaBeta[SELECTED-1];
+    var AnimationFlag = false;
+    var IsGameOver = true;
+    var startTime;
+    for (var i = 0; i < divs.length; i++) {
+        divs[i].addEventListener("animationend",function(){
+            emptyNode.style["grid-area"] = this.style["grid-area"];
+            this.style["grid-area"] = emptyFlag;
+            emptyFlag = emptyNode.style.gridRowStart;
+            this.style.animation = "";
+            AnimationFlag = false;
+            console.log("animation finished")
+            if (checkFinished()) {
+                IsGameOver = true;
+                successAnimation();
+            }
+
+        })
+        divs[i].addEventListener("click", function(event) {
+            var index = getMovePos(emptyFlag).indexOf(this.style.gridRowStart);
+            if (!AnimationFlag && index > -1) {
+                // console.log(Animations[index] + " 1s linear");
+                this.style.animation = Animations[index] + " 0.1s linear";
+                AnimationFlag = true;
+            }
+
+        })
+    }
+    randomLayut(100);
+    document.onkeydown = function(e){
+        if(IsGameOver&&AnimationFlag)return;
+        var code = e.keyCode || e.which, 
+            pos = getMovePos(emptyFlag),
+            node;
+        if (pos[code-37] != undefined) {
+                node = [...divs].filter(function(item) {
+                        return item.style.gridRowStart == pos[code-37];
+                    })
+                node[0].style.animation = Animations[code-37] + " 0.1s linear";
+                AnimationFlag = true;
+                if (checkFinished()) {
+                    IsGameOver = true;
+                    successAnimation();
+                }
+            }
+    }
+
+    // 检验完成方法
+    function checkFinished() {
+        for (var i = 0; i < divs.length; i++) {
+            if (divs[i].style.gridRowStart != AlphaBeta[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 完成动画
+    function successAnimation(){
+        var opanelBg = document.getElementById("opanel");
+        opanelBg.style.zIndex = 99;
+        opanelBg.children[1].style.display = "block";
+        opanelBg.children[2].style.display = "inline-block";
+        opanelBg.children[2].innerHTML = getGameTime();
+    }
+
+    // 获取游戏时间方法
+    function getGameTime(){
+        var currentTime = new Date();
+        var padding = parseInt((currentTime.getTime() - startTime.getTime())/1000);
+        return "用时" + (Math.floor(padding/60)) +
+                 "分" + (padding%60) + "秒";
+    }
+
+    // 打乱方法
+    function randomLayut(step) {
+        var pos, ran, node, preNodeFlag;
+        while (step > 0) {
+            pos = getMovePos(emptyFlag);
+            ran = Math.floor((Math.random() * pos.length));
+            while (pos[ran] == undefined || pos[ran] == preNodeFlag) {
+                ran = Math.floor((Math.random() * pos.length));
+            }
+            console.log(pos[ran]);
+            node = [...divs].filter(function(item) {
+                return item.style.gridRowStart == pos[ran];
+            })
+            emptyNode.style["grid-area"] = node[0].style["grid-area"];
+            node[0].style["grid-area"] = emptyFlag;
+            preNodeFlag = emptyFlag;
+            emptyFlag = emptyNode.style.gridRowStart;
+
+            step--;
+        }
+    }
+
+
+    // 计算可移动的方块位置
+    function getMovePos(empty) {
+        var pos = AlphaBeta.indexOf(empty);
+        if (pos % BORDER == 0) {
+            return [AlphaBeta[pos + 1],AlphaBeta[pos + BORDER],undefined,AlphaBeta[pos - BORDER]];
+        } else if (pos % BORDER == (BORDER - 1)) {
+            return [undefined, AlphaBeta[pos + BORDER], AlphaBeta[pos - 1], AlphaBeta[pos - BORDER]];
+            
+        } else {
+            return [AlphaBeta[pos + 1],AlphaBeta[pos + BORDER],  AlphaBeta[pos - 1], AlphaBeta[pos - BORDER]];
+        }
+    }
+
+    // 开始游戏
+    function gameStart(){
+        var op = document.getElementById("opanel");
+        var st = setTimeout(function(){
+            op.children[0].style.display = "none";
+            op.children[1].style.display = "none";
+            op.children[2].innerHTML = "3";
+            op.children[2].style.display = "block";
+            op.children[2].style.animation = "span_clock 1s linear";
+            op.children[2].addEventListener("animationend",function(e){
+                this.style.animation = "";
+                if(parseInt(this.innerHTML) >= 1){
+                    this.innerHTML = this.innerHTML - 1 || "Go";
+                    var self = this;
+                    var st = setTimeout(function(){
+                        self.style.animation = "span_clock 1s linear";
+                        clearTimeout(st);
+                    },0)
+                    
+                }else{
+                    this.innerHTML = "";
+                    this.parentNode.style.zIndex = "-1";
+                    startTime = new Date();
+                }
+                
+
+            })
+            clearTimeout(st);
+        },1000)
+        
+    }
+    </script>
+</body>
+
+</html>

@@ -7,6 +7,8 @@ var multer  = require('multer');
  
 app.use('/public', express.static('public'));
 app.use('/save', express.static('save'));
+app.use('/static', express.static('static'));
+app.use('/images', express.static('../images'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ dest: './tmp/'}).array('file'));
  
