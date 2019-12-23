@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>scrollTime</title>
+    <meta charset="utf-8">
+    <style>
+    .continer{
+    	    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    }
+    .scroll {
+        width: 100px;
+        height: 100px;
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        border: 1px solid gray;
+    }
+
+    .scroll span {
+        display: flex;
+        height: 100px;
+        width: 100px;
+        text-align: center;
+        font-size: 40px;
+        box-sizing: border-box;
+        justify-content: center;
+        align-items: center;
+
+    }
+    .bar{
+		position: relative;
+		top: -200px;
+    }
+    @keyframes close{
+		0%{
+			height: 100px;
+		}
+		100%{
+			height: 0px;
+		}
+    }
+    </style>
+</head>
+
+<body>
+	<div class="continer">
+		<div id="scroll6"></div>
+		<div id="scroll5"></div>:
+		<div id="scroll4"></div>
+		<div id="scroll3"></div>:
+		<div id="scroll2"></div>
+	    <div id="scroll1"></div>
+	</div>
+	
+    <script>
+    	var timeArray=[9,5,9,5,9,2];//时间递进队列
+    	init_dom();
+    	
+    	// 生成dom结点
+    	function init_dom(){
+    		var date = new Date();
+	    	var s = [date.getHours(),date.getMinutes(),date.getSeconds()].reduce(function(total,item){
+	    		return total + (item>9?item:"0"+item);
+	    	},"");
+    		var scrollDiv,barDiv,span,i,j;
+    		for(i=0;i<timeArray.length;i++){
+    			scrollDiv = document.getElementById("scroll"+(i+1));
+    			scrollDiv.innerHTML = "";
+    			scrollDiv.className = "scroll";
+    			barDiv = document.createElement("div");
+    			barDiv.className = "bar";
+    			if(i == 4 && parseInt(s.substr(0,2)) >= 20){
+					for(j=0;j<=3;j++){
+	    				span = document.createElement("span");
+	    				span.innerHTML = (parseInt(s[timeArray.length-i-1]) - 1 + j+3)%(4);
+	    				barDiv.appendChild(span);
+	    			}
+    			}else{
+    				for(j=0;j<=timeArray[i];j++){
+	    				span = document.createElement("span");
+	    				span.innerHTML = (parseInt(s[timeArray.length-i-1]) - 1 + j+timeArray[i])%(timeArray[i]+1);
+	    				barDiv.appendChild(span);
+	    			}
+    			}
+    			
+    			scrollDiv.appendChild(barDiv);
+    		}
+    	};
+    	(function(){
+    		var scrollDiv = document.getElementById("scroll1");
+	    	var sI = setInterval(function(){
+	    		var dom = scrollDiv.children[0].children[0];
+	    		dom.style.animation = "close 0.5s linear";
+	    		if(scrollDiv.children[0].children[2].innerHTML == timeArray[0]){
+	    			tickSec(1);
+	    		}
+	    		dom.addEventListener("animationend",function(event){
+	    			var ev = event || window.event;
+	    			var target = ev.target;
+		    		var node = document.createElement("span");
+		    		node.innerHTML = target.innerHTML;
+		    		scrollDiv.children[0].removeChild(target);
+		    		scrollDiv.children[0].appendChild(node);
+		    	})
+
+	    	},1000)
+    	})();
+    	
+
+    	// 触发器
+    	function tickSec(index){
+    		var scrollDiv = document.getElementById("scroll"+(index+1));
+    		var dom = scrollDiv.children[0].children[0];
+    		dom.style.animation = "close 0.5s linear";
+    		if(index<timeArray.length - 1 && scrollDiv.children[0].children[2].innerHTML == timeArray[index]){
+    			tickSec(index+1);
+    		}
+    		if(index == 4 && scrollDiv.children[0].children[2].innerHTML == '3' &&
+    		 scrollDiv.children[0].children.length == 4){
+    			tickSec(index+1);
+    		}
+    		dom.addEventListener("animationend",function(event){
+    			var ev = event || window.event;
+    			var target = ev.target;
+	    		var node = document.createElement("span");
+	    		node.innerHTML = target.innerHTML;
+	    		scrollDiv.children[0].removeChild(target);
+	    		scrollDiv.children[0].appendChild(node);
+	    		if(index == 5){
+	    			init_dom();//重置时间
+	    		}
+	    	})
+    	}
+    	
+    </script>
+</body>
+
+</html>
