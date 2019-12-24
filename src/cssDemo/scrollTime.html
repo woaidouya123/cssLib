@@ -58,6 +58,24 @@
 	
     <script>
     	var timeArray=[9,5,9,5,9,2];//时间递进队列
+
+    	// 设置隐藏属性和改变可见属性的事件的名称
+		var hidden, visibilityChange; 
+		if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+		  hidden = "hidden";
+		  visibilityChange = "visibilitychange";
+		} else if (typeof document.msHidden !== "undefined") {
+		  hidden = "msHidden";
+		  visibilityChange = "msvisibilitychange";
+		} else if (typeof document.webkitHidden !== "undefined") {
+		  hidden = "webkitHidden";
+		  visibilityChange = "webkitvisibilitychange";
+		}
+		// 处理页面可见属性的改变
+  		document.addEventListener(visibilityChange, function(){
+  			init_dom();
+  		}, false);
+
     	init_dom();
     	
     	// 生成dom结点
