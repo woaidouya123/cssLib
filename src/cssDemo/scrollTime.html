@@ -57,7 +57,7 @@
 	</div>
 	
     <script>
-    	var timeArray=[9,5,9,5,9,2];//时间递进队列
+    	var timeArray=[9,5,9,5,13,2];//时间递进队列
 
     	// 设置隐藏属性和改变可见属性的事件的名称
 		var hidden, visibilityChange; 
@@ -73,47 +73,75 @@
 		}
 		// 处理页面可见属性的改变
   		document.addEventListener(visibilityChange, function(){
-  			init_dom();
+  			start();
   		}, false);
 
-    	init_dom();
+  		// 启动
+  		function start(){
+
+  			// 毫秒差纠正
+  			var date = new Date();
+  			var pad = 1000 -date.getMilliseconds();
+  			var st = setTimeout(function(){
+  				scroll();
+  				clearTimeout(st);
+  			},pad)
+  			init_dom(new Date(date.getTime()+pad));
+  			
+  		}
+
+  		start();
     	
+
     	// 生成dom结点
-    	function init_dom(){
-    		var date = new Date();
+    	function init_dom(date){
 	    	var s = [date.getHours(),date.getMinutes(),date.getSeconds()].reduce(function(total,item){
 	    		return total + (item>9?item:"0"+item);
 	    	},"");
     		var scrollDiv,barDiv,span,i,j;
-    		for(i=0;i<timeArray.length;i++){
+    		var columns = [],col,s_num;
+    		// 计算每一列的值
+			for(i=0;i<timeArray.length;i++){
+				col = [], s_num = parseInt(s[timeArray.length-i-1]);
+				for(j=0;j<=timeArray[i];j++){
+					col.push((s_num - 1 + j + timeArray[i]) % (timeArray[i] + 1) % 10);
+    			}
+
+    			// 对小时进行特殊处理
+    			if(i===4&&parseInt(s[0])>=2){
+    				col = col.slice(10).concat(col.slice(0,10));
+    			}
+    			if(i===5){
+    				for(j=0;j<=timeArray[i];j++){
+						col.push((s_num - 1 + j + timeArray[i]) % (timeArray[i] + 1));
+	    			}
+    			}
+    			columns.push(col);
+			}
+    		for(i=0;i<columns.length;i++){
     			scrollDiv = document.getElementById("scroll"+(i+1));
     			scrollDiv.innerHTML = "";
     			scrollDiv.className = "scroll";
     			barDiv = document.createElement("div");
     			barDiv.className = "bar";
-    			if(i == 4 && parseInt(s.substr(0,2)) >= 20){
-					for(j=0;j<=3;j++){
-	    				span = document.createElement("span");
-	    				span.innerHTML = (parseInt(s[timeArray.length-i-1]) - 1 + j+3)%(4);
-	    				barDiv.appendChild(span);
-	    			}
-    			}else{
-    				for(j=0;j<=timeArray[i];j++){
-	    				span = document.createElement("span");
-	    				span.innerHTML = (parseInt(s[timeArray.length-i-1]) - 1 + j+timeArray[i])%(timeArray[i]+1);
-	    				barDiv.appendChild(span);
-	    			}
+    			
+    			for(j=0;j<columns[i].length;j++){
+    				span = document.createElement("span");
+    				span.innerHTML = columns[i][j];
+    				barDiv.appendChild(span);
     			}
     			
     			scrollDiv.appendChild(barDiv);
     		}
     	};
-    	(function(){
+
+    	// 启动方法；
+    	function scroll(){
     		var scrollDiv = document.getElementById("scroll1");
 	    	var sI = setInterval(function(){
 	    		var dom = scrollDiv.children[0].children[0];
 	    		dom.style.animation = "close 0.5s linear";
-	    		if(scrollDiv.children[0].children[2].innerHTML == timeArray[0]){
+	    		if(scrollDiv.children[0].children[3].innerHTML == "0"){
 	    			tickSec(1);
 	    		}
 	    		dom.addEventListener("animationend",function(event){
@@ -121,12 +149,12 @@
 	    			var target = ev.target;
 		    		var node = document.createElement("span");
 		    		node.innerHTML = target.innerHTML;
-		    		scrollDiv.children[0].removeChild(target);
+		    		target.parentNode.removeChild(target);
 		    		scrollDiv.children[0].appendChild(node);
 		    	})
 
 	    	},1000)
-    	})();
+    	};
     	
 
     	// 触发器
@@ -134,11 +162,7 @@
     		var scrollDiv = document.getElementById("scroll"+(index+1));
     		var dom = scrollDiv.children[0].children[0];
     		dom.style.animation = "close 0.5s linear";
-    		if(index<timeArray.length - 1 && scrollDiv.children[0].children[2].innerHTML == timeArray[index]){
-    			tickSec(index+1);
-    		}
-    		if(index == 4 && scrollDiv.children[0].children[2].innerHTML == '3' &&
-    		 scrollDiv.children[0].children.length == 4){
+    		if(index<timeArray.length - 1 && scrollDiv.children[0].children[3].innerHTML == "0"){
     			tickSec(index+1);
     		}
     		dom.addEventListener("animationend",function(event){
@@ -148,9 +172,6 @@
 	    		node.innerHTML = target.innerHTML;
 	    		scrollDiv.children[0].removeChild(target);
 	    		scrollDiv.children[0].appendChild(node);
-	    		if(index == 5){
-	    			init_dom();//重置时间
-	    		}
 	    	})
     	}
     	
