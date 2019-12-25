@@ -5,12 +5,13 @@
     <title>scrollTime</title>
     <meta charset="utf-8">
     <style>
-    .continer{
-    	    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 40px;
+    .continer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
     }
+
     .scroll {
         width: 100px;
         height: 100px;
@@ -31,150 +32,153 @@
         align-items: center;
 
     }
-    .bar{
-		position: relative;
-		top: -200px;
+
+    .bar {
+        position: relative;
+        top: -200px;
     }
-    @keyframes close{
-		0%{
-			height: 100px;
-		}
-		100%{
-			height: 0px;
-		}
+
+    @keyframes close {
+        0% {
+            height: 100px;
+        }
+
+        100% {
+            height: 0px;
+        }
     }
     </style>
 </head>
 
 <body>
-	<div class="continer">
-		<div id="scroll6"></div>
-		<div id="scroll5"></div>:
-		<div id="scroll4"></div>
-		<div id="scroll3"></div>:
-		<div id="scroll2"></div>
-	    <div id="scroll1"></div>
-	</div>
-	
+    <div class="continer">
+        <div id="scroll6"></div>
+        <div id="scroll5"></div>:
+        <div id="scroll4"></div>
+        <div id="scroll3"></div>:
+        <div id="scroll2"></div>
+        <div id="scroll1"></div>
+    </div>
     <script>
-    	var timeArray=[9,5,9,5,13,2];//时间递进队列
+    var timeArray = [9, 5, 9, 5, 13, 2]; //时间递进队列
+    var SI;
+    // 设置隐藏属性和改变可见属性的事件的名称
+    var hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+        hidden = "hidden";
+        visibilityChange = "visibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+        hidden = "msHidden";
+        visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+        hidden = "webkitHidden";
+        visibilityChange = "webkitvisibilitychange";
+    }
+    // 处理页面可见属性的改变
+    document.addEventListener(visibilityChange, function() {
+        clearInterval(SI);
+        start();
+    }, false);
 
-    	// 设置隐藏属性和改变可见属性的事件的名称
-		var hidden, visibilityChange; 
-		if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
-		  hidden = "hidden";
-		  visibilityChange = "visibilitychange";
-		} else if (typeof document.msHidden !== "undefined") {
-		  hidden = "msHidden";
-		  visibilityChange = "msvisibilitychange";
-		} else if (typeof document.webkitHidden !== "undefined") {
-		  hidden = "webkitHidden";
-		  visibilityChange = "webkitvisibilitychange";
-		}
-		// 处理页面可见属性的改变
-  		document.addEventListener(visibilityChange, function(){
-  			start();
-  		}, false);
+    // 启动
+    function start() {
 
-  		// 启动
-  		function start(){
+        // 毫秒差纠正
+        var date = new Date();
+        var pad = 1000 - date.getMilliseconds();
+        var st = setTimeout(function() {
+            scroll();
+            clearTimeout(st);
+        }, pad)
+        init_dom(new Date(date.getTime() + pad));
 
-  			// 毫秒差纠正
-  			var date = new Date();
-  			var pad = 1000 -date.getMilliseconds();
-  			var st = setTimeout(function(){
-  				scroll();
-  				clearTimeout(st);
-  			},pad)
-  			init_dom(new Date(date.getTime()+pad));
-  			
-  		}
+    }
 
-  		start();
-    	
+    start();
 
-    	// 生成dom结点
-    	function init_dom(date){
-	    	var s = [date.getHours(),date.getMinutes(),date.getSeconds()].reduce(function(total,item){
-	    		return total + (item>9?item:"0"+item);
-	    	},"");
-    		var scrollDiv,barDiv,span,i,j;
-    		var columns = [],col,s_num;
-    		// 计算每一列的值
-			for(i=0;i<timeArray.length;i++){
-				col = [], s_num = parseInt(s[timeArray.length-i-1]);
-				for(j=0;j<=timeArray[i];j++){
-					col.push((s_num - 1 + j + timeArray[i]) % (timeArray[i] + 1) % 10);
-    			}
 
-    			// 对小时进行特殊处理
-    			if(i===4&&parseInt(s[0])>=2){
-    				col = col.slice(10).concat(col.slice(0,10));
-    			}
-    			if(i===5){
-    				for(j=0;j<=timeArray[i];j++){
-						col.push((s_num - 1 + j + timeArray[i]) % (timeArray[i] + 1));
-	    			}
-    			}
-    			columns.push(col);
-			}
-    		for(i=0;i<columns.length;i++){
-    			scrollDiv = document.getElementById("scroll"+(i+1));
-    			scrollDiv.innerHTML = "";
-    			scrollDiv.className = "scroll";
-    			barDiv = document.createElement("div");
-    			barDiv.className = "bar";
-    			
-    			for(j=0;j<columns[i].length;j++){
-    				span = document.createElement("span");
-    				span.innerHTML = columns[i][j];
-    				barDiv.appendChild(span);
-    			}
-    			
-    			scrollDiv.appendChild(barDiv);
-    		}
-    	};
+    // 生成dom结点
+    function init_dom(date) {
+        var s = [date.getHours(), date.getMinutes(), date.getSeconds()].reduce(function(total, item) {
+            return total + (item > 9 ? item : "0" + item);
+        }, "");
+        var scrollDiv, barDiv, span, i, j;
+        var columns = [],
+            col, s_num;
+        // 计算每一列的值
+        for (i = 0; i < timeArray.length; i++) {
+            col = [], s_num = parseInt(s[timeArray.length - i - 1]);
+            for (j = 0; j <= timeArray[i]; j++) {
+                col.push((s_num - 1 + j + timeArray[i]) % (timeArray[i] + 1) % 10);
+            }
 
-    	// 启动方法；
-    	function scroll(){
-    		var scrollDiv = document.getElementById("scroll1");
-	    	var sI = setInterval(function(){
-	    		var dom = scrollDiv.children[0].children[0];
-	    		dom.style.animation = "close 0.5s linear";
-	    		if(scrollDiv.children[0].children[3].innerHTML == "0"){
-	    			tickSec(1);
-	    		}
-	    		dom.addEventListener("animationend",function(event){
-	    			var ev = event || window.event;
-	    			var target = ev.target;
-		    		var node = document.createElement("span");
-		    		node.innerHTML = target.innerHTML;
-		    		target.parentNode.removeChild(target);
-		    		scrollDiv.children[0].appendChild(node);
-		    	})
+            // 对小时进行特殊处理
+            if (i === 4 && parseInt(s[0]) >= 2) {
+                col = col.slice(10).concat(col.slice(0, 10));
+            }
+            if (i === 5) {
+                for (j = 0; j <= timeArray[i]; j++) {
+                    col.push((s_num - 1 + j + timeArray[i]) % (timeArray[i] + 1));
+                }
+            }
+            columns.push(col);
+        }
+        for (i = 0; i < columns.length; i++) {
+            scrollDiv = document.getElementById("scroll" + (i + 1));
+            scrollDiv.innerHTML = "";
+            scrollDiv.className = "scroll";
+            barDiv = document.createElement("div");
+            barDiv.className = "bar";
 
-	    	},1000)
-    	};
-    	
+            for (j = 0; j < columns[i].length; j++) {
+                span = document.createElement("span");
+                span.innerHTML = columns[i][j];
+                barDiv.appendChild(span);
+            }
 
-    	// 触发器
-    	function tickSec(index){
-    		var scrollDiv = document.getElementById("scroll"+(index+1));
-    		var dom = scrollDiv.children[0].children[0];
-    		dom.style.animation = "close 0.5s linear";
-    		if(index<timeArray.length - 1 && scrollDiv.children[0].children[3].innerHTML == "0"){
-    			tickSec(index+1);
-    		}
-    		dom.addEventListener("animationend",function(event){
-    			var ev = event || window.event;
-    			var target = ev.target;
-	    		var node = document.createElement("span");
-	    		node.innerHTML = target.innerHTML;
-	    		scrollDiv.children[0].removeChild(target);
-	    		scrollDiv.children[0].appendChild(node);
-	    	})
-    	}
-    	
+            scrollDiv.appendChild(barDiv);
+        }
+    };
+
+    // 启动方法；
+    function scroll() {
+        var scrollDiv = document.getElementById("scroll1");
+        SI = setInterval(function() {
+            var dom = scrollDiv.children[0].children[0];
+            dom.style.animation = "close 0.5s linear";
+            if (scrollDiv.children[0].children[3].innerHTML == "0") {
+                tickSec(1);
+            }
+            dom.addEventListener("animationend", function(event) {
+                var ev = event || window.event;
+                var target = ev.target;
+                var node = document.createElement("span");
+                node.innerHTML = target.innerHTML;
+                target.parentNode.removeChild(target);
+                scrollDiv.children[0].appendChild(node);
+            })
+
+        }, 1000)
+    };
+
+
+    // 触发器
+    function tickSec(index) {
+        var scrollDiv = document.getElementById("scroll" + (index + 1));
+        var dom = scrollDiv.children[0].children[0];
+        dom.style.animation = "close 0.5s linear";
+        if (index < timeArray.length - 1 && scrollDiv.children[0].children[3].innerHTML == "0") {
+            tickSec(index + 1);
+        }
+        dom.addEventListener("animationend", function(event) {
+            var ev = event || window.event;
+            var target = ev.target;
+            var node = document.createElement("span");
+            node.innerHTML = target.innerHTML;
+            scrollDiv.children[0].removeChild(target);
+            scrollDiv.children[0].appendChild(node);
+        })
+    }
     </script>
 </body>
 
