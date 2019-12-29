@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>图片毛玻璃效果</title>
+    <style>
+    img {
+        filter: url(blur.svg#blur);/* FireFox, Chrome, Opera */
+        -webkit-filter: blur(5px);/* Chrome, Opera */
+        -moz-filter: blur(5px);
+        -ms-filter: blur(5px);
+        filter: blur(5px);
+        filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=5, MakeShadow=false);/* IE6~IE9 */
+    }
+    </style>
+</head>
+
+<body>
+    <img src="../images/nkss2.png" alt="图片未加载">
+</body>
+
+</html>
