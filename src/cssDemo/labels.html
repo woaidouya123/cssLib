@@ -6,7 +6,8 @@
     <meta charset="utf-8">
     <style>
     .label-paper {
-        width: 200px;
+    	width: fit-content;
+        max-width: 200px;
         height: 25px;
         line-height: 25px;
         background: yellowgreen;
@@ -29,16 +30,19 @@
 
     .label-paper:hover {
         height: fit-content;
+        max-width: 500px
     }
 
     .label-paper:hover>span {
-        white-space: normal;
+        word-wrap: break-word;
+		white-space: pre;
+		word-break: keep-all;
     }
 
     .label-paper::after {
         content: "";
         display: block;
-        width: 200px;
+        width: 100%;
         position: absolute;
         top: 0;
         left: 0;
@@ -87,7 +91,10 @@
 
 <body>
     <div class="label-paper" >
-        <span>这是一段长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长的文字！</span>
+        <span>asd 
+        dfsadfasdffffffffffffffffffffffffffffffffff
+    sdfasdf
+sadfadsf</span>
         <div class="op">
         	<button class="move" onmousedown="mousedown()" onmousemove="mousemove()" 
     onmouseleave="mouseleave()" onmouseup="mouseleave()">&#10021</button>
