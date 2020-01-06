@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>echarts_bar</title>
+    
+    </head>
+<body>
+	<div id="bar1" style="width: 600px;height:400px;float: left;"></div>
+	<div id="bar2" style="width: 600px;height:400px;float: left;"></div>
+	<div id="bar3" style="width: 600px;height:400px;float: left;"></div>
+	<div id="pie1" style="width: 600px;height:400px;float: left;"></div>
+	<div id="line1" style="width: 600px;height:400px;float: left;"></div>
+	<script src="./echarts.js" ></script>
+	<script>
+var myChart1 = echarts.init(document.getElementById('bar1'));
+var myChart2 = echarts.init(document.getElementById('bar2'));
+var myChart3 = echarts.init(document.getElementById('bar3'));
+var myChart4 = echarts.init(document.getElementById('pie1'));
+var myChart5 = echarts.init(document.getElementById('line1'));
+// 指定图表的配置项和数据
+var colors = ["#ff7f50", "#87cefa", "#da70d6", "#32cd32", "#6495ed", "#ff69b4", "#ba55d3", "#cd5c5c", "#ffa500", "#40e0d0", "#1e90ff", "#ff6347", "#7b68ee", "#00fa9a", "#ffd700", "#6699FF", "#ff6666", "#3cb371", "#b8860b", "#30e0e0"];
+        var option1 = {
+            title: {
+                text: 'ECharts 入门示例',
+                x:'center'
+                
+            },
+            tooltip: {
+            	trigger:'axis',
+            	axisPointer:{
+            		type:'line',
+            		axis:'x'
+            	}
+            },
+            // legend: {
+            //     data:['销量','销量2']
+            // },
+            xAxis: {
+                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"],
+                axisLabel:{
+                	show:false
+                },
+                axisTick:{
+                	show:false
+                }
+            },
+            yAxis: {
+            	show:false
+            },
+            series: [
+            {
+                name: '销量',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20],
+                color:function(params){
+                	return colors[params.dataIndex]
+                },
+                label:{
+                	show: true,
+                	position:'top',
+                	formatter:'{b}\n{c}',
+                	textStyle:{
+                		color:'black'
+                	}
+                }
+            }
+            ]
+        };
+myChart1.setOption(option1,true);
+
+var option2 = {
+            title: {
+                text: 'ECharts 入门示例',
+                x:'center'
+                
+            },
+            tooltip: {},
+            xAxis: {
+            	type:'value'
+            },
+            yAxis: {
+            	type:'category',
+            	data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"],
+            	axisLabel:{
+                	show:false
+                },
+                axisTick:{
+                	show:false
+                }
+            },
+            series: [
+            {
+                name: '销量',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20],
+                color:function(params){
+                	return colors[params.dataIndex]
+                },
+                label:{
+                	show: true,
+                	position:'right',
+                	formatter:'{b}\n{c}',
+                	textStyle:{
+                		color:'black'
+                	}
+                }
+
+            }
+            ]
+        };
+        myChart2.setOption(option2,true);
+
+        var option3 = {
+            title: {
+                text: 'ECharts 入门示例',
+                x:'center'
+                
+            },
+            tooltip: {},
+            xAxis: {
+                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            },
+            yAxis: {},
+            series: [
+            {
+                name: '销量',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20],
+                color:function(params){
+                	return colors[params.dataIndex]
+                },
+                label:{
+                	show: true,
+                	position:'top',
+                	formatter:'{c}',
+                	textStyle:{
+                		color:'black'
+                	}
+                }
+            }
+            ]
+        };
+        myChart3.setOption(option3,true);
+
+        // 饼状图
+        var option4 = {
+            title: {
+                text: 'ECharts 入门示例',
+                x:'center'
+                
+            },
+            tooltip: {},
+            legend:{
+            	orient:'vertical',
+            	right:0,
+            	bottom:0
+            },
+            series: [
+            {
+                name: '销量',
+                type: 'pie',
+                radius:['25%','50%'],
+                data: [
+	                {
+	                	name:"衬衫",
+	                	value:5
+	                },
+	                {
+	                	name:"羊毛衫",
+	                	value:20
+	                },
+	                {
+	                	name:"雪纺衫",
+	                	value:36
+	                },
+	                {
+	                	name:"裤子",
+	                	value:10
+	                },
+	                {
+	                	name:"高跟鞋",
+	                	value:10
+	                },
+	                {
+	                	name:"袜子",
+	                	value:20
+	                }
+                ],
+                label:{
+                	show: true,
+                	formatter:'{b}:{c}'
+                }
+            }
+            ]
+        };
+        myChart4.setOption(option4,true);
+
+        // 曲线图
+        var option5 = {
+            title: {
+                text: 'ECharts 入门示例',
+                x:'center'
+                
+            },
+            legend:{
+            	right:0,
+            	bottom:0
+            },
+            xAxis: {
+                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            },
+            yAxis: {},
+            tooltip: {
+            	trigger:'axis',
+            	axisPointer:{
+            		type:'cross',
+            		axis:'x',
+            		snap:false
+            	}
+            },
+            series: [
+            {
+                name: '销量',
+                type: 'line',
+                smooth:true,
+                radius:['20%','50%'],
+                data: [5, 20, 36, 10, 10, 20],
+                label:{
+                	show: true,
+                	formatter:'{c}'
+                }
+            }
+            ]
+        };
+        myChart5.setOption(option5,true);
+	</script>
+    </body>
+
+</html>
