@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>formTest</title>
+	<meta charset="utf-8">
+</head>
+<body>
+<form action="" name="form1">
+	<input type="text" name="hello1" />
+	<input type="text" name="hello2" />
+	<select name="hell3">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+	</select>
+	<button onclick="submit1(this)">提交</button>
+</form>
+<script>
+	function submit1(ele){
+		var form = ele.form,res={};
+		for(var i=0;i<form.length;i++){
+			res[form[i].name] = form[i].value;
+		}
+		console.log(res);
+	}
+</script>
+</body>
+</html>
