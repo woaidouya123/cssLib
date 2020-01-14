@@ -114,11 +114,54 @@ function initBuffers(gl) {
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
                   gl.STATIC_DRAW);
+    const cubeVerticesNormalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesNormalBuffer);
+
+    const vertexNormals = [
+      // Front
+       0.0,  0.0,  1.0,
+       0.0,  0.0,  1.0,
+       0.0,  0.0,  1.0,
+       0.0,  0.0,  1.0,
+      
+      // Back
+       0.0,  0.0, -1.0,
+       0.0,  0.0, -1.0,
+       0.0,  0.0, -1.0,
+       0.0,  0.0, -1.0,
+      
+      // Top
+       0.0,  1.0,  0.0,
+       0.0,  1.0,  0.0,
+       0.0,  1.0,  0.0,
+       0.0,  1.0,  0.0,
+      
+      // Bottom
+       0.0, -1.0,  0.0,
+       0.0, -1.0,  0.0,
+       0.0, -1.0,  0.0,
+       0.0, -1.0,  0.0,
+      
+      // Right
+       1.0,  0.0,  0.0,
+       1.0,  0.0,  0.0,
+       1.0,  0.0,  0.0,
+       1.0,  0.0,  0.0,
+      
+      // Left
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
 
     return {
         position: squareVerticesBuffer,
         indices: cubeVerticesIndexBuffer,
-        texture: cubeVerticesTextureCoordBuffer
+        texture: cubeVerticesTextureCoordBuffer,
+        normal:cubeVerticesNormalBuffer
     };
 }
 
@@ -166,8 +209,11 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     mat4.rotate(modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to rotate
         squareRotation, // amount to rotate in radians
-        [1, 1, 1]); // axis to rotate around
+        [0, 1, 1]); // axis to rotate around
 
+      const normalMatrix = mat4.create();
+      mat4.invert(normalMatrix, modelViewMatrix);
+      mat4.transpose(normalMatrix, normalMatrix);
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     {
@@ -205,6 +251,23 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
         gl.enableVertexAttribArray(
             programInfo.attribLocations.textureCoordAttribute);
     }
+    {
+      const numComponents = 3;
+      const type = gl.FLOAT;
+      const normalize = false;
+      const stride = 0;
+      const offset = 0;
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normal);
+      gl.vertexAttribPointer(
+          programInfo.attribLocations.vertexNormal,
+          numComponents,
+          type,
+          normalize,
+          stride,
+          offset);
+      gl.enableVertexAttribArray(
+          programInfo.attribLocations.vertexNormal);
+    }
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
 
     // Tell WebGL to use our program when drawing
@@ -221,6 +284,10 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
         programInfo.uniformLocations.modelViewMatrix,
         false,
         modelViewMatrix);
+    gl.uniformMatrix4fv(
+        programInfo.uniformLocations.NormalMatrix,
+        false,
+        normalMatrix);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
     gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
@@ -239,27 +306,44 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 // start here
 //
 const vsSource = `
-        attribute vec3 aVertexPosition;
+        attribute vec3 aVertexNormal;
+        attribute vec4 aVertexPosition;
         attribute vec2 aTextureCoord;
 
+        uniform mat4 uNormalMatrix;
         uniform mat4 uModelViewMatrix;
         uniform mat4 uProjectionMatrix;
 
         varying highp vec2 vTextureCoord;
+        varying highp vec3 vLighting;
 
         void main() {
-          gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+          gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
           vTextureCoord = aTextureCoord;
+
+          // Apply lighting effect
+    
+          highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+          highp vec3 directionalLightColor = vec3(1, 1, 1);
+          highp vec3 directionalVector = normalize(vec3(0.85, 0.8, 0.75));
+
+          highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+
+          highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+          vLighting = ambientLight + (directionalLightColor * directional);
         }
       `;
 
 const fsSource = `
         varying highp vec2 vTextureCoord;
+        varying highp vec3 vLighting;
       
         uniform sampler2D uSampler;
             
         void main(void) {
-          gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+          mediump vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+    
+          gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
         }
       `;
 
@@ -279,11 +363,13 @@ function main() {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-            textureCoordAttribute : gl.getAttribLocation(shaderProgram, "aTextureCoord")
+            textureCoordAttribute : gl.getAttribLocation(shaderProgram, "aTextureCoord"),
+            vertexNormalAttribute: gl.getAttribLocation(shaderProgram, "aVertexNormal")
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+            NormalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
             uSampler: gl.getUniformLocation(shaderProgram, 'uSampler')
         },
     };
@@ -361,7 +447,7 @@ function initTextures(gl) {
   cubeTexture = gl.createTexture();
   cubeImage = new Image();
   cubeImage.onload = function() { handleTextureLoaded(gl, cubeImage, cubeTexture); }
-  cubeImage.src = "./images/nkss.png";
+  cubeImage.src = "./images/cubetexture.png";
 }
 
 function handleTextureLoaded(gl, image, texture) {
@@ -369,8 +455,6 @@ function handleTextureLoaded(gl, image, texture) {
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
   if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
        // Yes, it's a power of 2. Generate mips.
-       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_FILTER, gl.LINEAR);
-       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
        gl.generateMipmap(gl.TEXTURE_2D);
     } else {
        // No, it's not a power of 2. Turn of mips and set
