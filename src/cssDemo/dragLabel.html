@@ -19,7 +19,7 @@
 		    position: absolute;
 		    cursor: grab;
 		    transition: left,top;
-		    transition-duration: 1s;
+		    transition-duration: 0.6s;
 		}
 		.item span{
 		    display: block;
@@ -45,26 +45,53 @@
 		<div class="item" draggable="true"><span>9</span></div>
 	</div>
 	<script>
-		var divs = document.querySelectorAll(".item"),i,div,dragDiv,tempDiv;
+
+		var divs = document.querySelectorAll(".item"),i,div,dragDiv,isMoving = false;
+		for(i=0;i<divs.length;i++){
+			divs[i].style["background-color"] = getRandomColor();
+		}
 		document.body.addEventListener("dragover",function(ev){
 			ev.preventDefault();
 		})
 		sortDiv(divs);
-		for(var i=0;i<divs.length;i++){
+		for(i=0;i<divs.length;i++){
 			div = divs[i];
 			div.addEventListener("dragstart",function(e){
 				dragDiv = this;
-				console.log(this.innerHTML);
 			})
 			div.addEventListener("dragover",function(e){
-				if(!this.isEqualNode(this.parentNode.children[divs.length-1])){
-					this.parentNode.insertBefore(dragDiv,this);
-				}else{
-					this.parentNode.appendChild(dragDiv);
+				if(isMoving || this.isEqualNode(dragDiv)){
+					return;
 				}
-				
+				if(isPreviousElements(this,dragDiv)){
+					this.parentNode.insertBefore(dragDiv,this.nextSibling);
+				}else{
+					this.parentNode.insertBefore(dragDiv,this);
+				}
+				isMoving = true;
+				var st = setTimeout(function(){
+					isMoving = false;
+					clearTimeout(st);
+				},600);
 				sortDiv(document.querySelectorAll(".item"))
 			})
+		}
+
+		// 随机生成颜色
+		function getRandomColor(){
+			return "rgb(" + Math.random()*256 +","+ Math.random()*256+","+ Math.random()*256+")"
+		}
+
+		// 判断拖动元素是否在目标元素之前
+		function isPreviousElements(sourse, target){
+			if(!sourse.previousSibling){
+				return false;
+			}
+
+			if(target.isEqualNode(sourse.previousSibling)){
+				return true;
+			}
+			return isPreviousElements(sourse.previousSibling, target)
 		}
 
 		// 位置排序
