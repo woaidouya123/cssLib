@@ -53,6 +53,7 @@
 		    background-color: aliceblue;
 		    position: absolute;
     		width: 300px;
+    		border-radius: 5px;
 		}
 		.search-ul li{
 			color: darkgray;
@@ -60,6 +61,7 @@
 		    border-radius: 5px;
 		    user-select: none;
 		    text-indent: 15px;
+		    margin: 5px 0;
 
 		}
 		.search-ul li label span{
@@ -124,7 +126,8 @@
 
     		// 如果是上下键
     		var lis = document.querySelectorAll("ul.search-ul>li"),
-    			cur = document.querySelectorAll("ul.search-ul>li>label>input:checked")[0].parentNode.parentNode,
+    			cur = document.querySelectorAll("ul.search-ul>li>label>input:checked")[0]&&
+    			document.querySelectorAll("ul.search-ul>li>label>input:checked")[0].parentNode.parentNode,
     			st;
     		console.log(lis,cur);
     		if(ev.which == 38){
