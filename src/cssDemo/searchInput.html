@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>搜索框</title>
+    <style>
+        .search-div{
+		    width: 300px;
+		    height: 35px;
+		}
+		.search-ul::before{
+			content: "";
+		    display: block;
+		    width: 20px;
+		    height: 20px;
+		    position: absolute;
+		    border: 10px solid transparent;
+		    box-sizing: border-box;
+		    border-bottom: 10px solid aliceblue;
+		    top: -20px;
+		    left: 15px;
+		}
+		.search-input{
+		    width: 100%;
+		    height: 100%;
+		    box-sizing: border-box;
+		    border: 1px solid darkgray;
+		    border-radius: 30px;
+		    text-indent: 15px;
+		    font-size: 14px;
+		    outline: none;
+		}
+		.search-input-div{
+			width: 100%;
+		    height: 100%;
+		    position: relative;
+		}
+		.search-input-div::after{
+			content: '\27a4';
+		    position: absolute;
+		    display: block;
+		    height: 35px;
+		    line-height: 33px;
+		    right: 15px;
+		    top: 0px;
+		    color: darkgray;
+		}
+		.search-ul{
+		    list-style: none;
+		    padding: 0px;
+		    margin: 10px 0 0 0;
+		    font-size: 14px;
+		    background-color: aliceblue;
+		    position: absolute;
+    		width: 300px;
+		}
+		.search-ul li{
+			color: darkgray;
+		    cursor: pointer;
+		    border-radius: 5px;
+		    user-select: none;
+		    text-indent: 15px;
+
+		}
+		.search-ul li label span{
+			color: darkgray;
+		    padding: 5px 0px;
+		    cursor: pointer;
+		    border-radius: 5px;
+		    display: block;
+		}
+		.search-ul li label input[type=radio]{
+			display: none;
+		}
+		.search-ul li label input[type=radio]:checked + span,.search-ul li label span:hover{
+			background-color: gray;
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+    <div class="search-div">
+    	<div class="search-input-div">
+    		<input class="search-input" type="text" placeholder="请输入" onkeyup="searchText(event)"  />
+    	</div>
+        <ul class="search-ul" style="display: none;">
+            <li>
+            	<label>
+            		<input type="radio" name="searchInputSelect" value="搜索1">
+            		<span>搜索1</span>
+            	</label>
+        	</li>
+            <li>
+            	<label>
+            		<input type="radio" name="searchInputSelect" value="搜索2">
+            		<span>搜索2</span>
+            	</label>
+        	</li>
+        	<li>
+            	<label>
+            		<input type="radio" name="searchInputSelect" value="搜索3">
+            		<span>搜索3</span>
+            	</label>
+        	</li>
+        	<li>
+            	<label>
+            		<input type="radio" name="searchInputSelect" value="搜索4">
+            		<span>搜索4</span>
+            	</label>
+        	</li>
+        </ul>
+    </div>
+    <script>
+    	function searchText(event){
+    		var ev = event || window.event;
+    		var target = ev.target || ev.srcElement;
+    		console.log(ev.code,ev.which);
+    		if(target.value){
+    			target.parentNode.nextElementSibling.style.display="block";
+    		}else{
+    			target.parentNode.nextElementSibling.style.display="none";
+    		}
+
+    		// 如果是上下键
+    		var lis = document.querySelectorAll("ul.search-ul>li"),
+    			cur = document.querySelectorAll("ul.search-ul>li>label>input:checked")[0].parentNode.parentNode,
+    			st;
+    		console.log(lis,cur);
+    		if(ev.which == 38){
+    			if(cur && cur.previousElementSibling){
+					cur.previousElementSibling.children[0].children[0].checked="checked";
+					cur = cur.previousElementSibling;
+    				
+    			}else{
+					lis[lis.length-1].children[0].children[0].checked="checked";
+					cur = lis[lis.length-1];
+    				
+    			}
+    		}else if(ev.which == 40){
+
+				if(cur && cur.nextElementSibling){
+    				cur.nextElementSibling.children[0].children[0].checked="checked";
+    				cur = cur.nextElementSibling;
+    			}else{
+    				lis[0].children[0].children[0].checked="checked";
+    				cur = lis[0];
+    			}
+    		}
+    	}
+
+
+    	// 工具方法
+    	Element.prototype.trigger = function(eventName){
+		  this.dispatchEvent(new Event(eventName));
+		}
+		NodeList.prototype.trigger = function(eventName){
+		  [].forEach.call(this, function(item, index){
+		    item.dispatchEvent(new Event(eventName));
+		  });
+		}
+    </script>
+</body>
+
+</html>
