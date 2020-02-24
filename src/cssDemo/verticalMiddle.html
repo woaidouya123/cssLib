@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>垂直居中方法</title>
+    <meta charset="utf-8">
+    <style>
+    div {
+        width: 400px;
+        height: 400px;
+        background-color: antiquewhite;
+        float: left;
+        margin: 5px;
+    }
+
+    .div1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+	.div2{
+		position: relative;
+	}
+    .div2 span {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        text-align: center;
+        transform: translateY(-50%);
+    }
+    .div3{
+		display: table;
+    }
+    .div3 span{
+    	display: table-cell;
+    	text-align: center;
+    	vertical-align: middle;
+    }
+
+    .div4{
+		line-height: 400px;
+    	text-align: center;
+    }
+    .div4 span{
+    	display: inline-block;
+    	line-height: 1.3;
+    	vertical-align: middle;
+    }
+
+    .div5{
+    	position: relative;
+    	overflow: hidden;
+    }
+    .div5 span{
+    	position: absolute;
+	    display: inline-block;
+	    text-align: center;
+	    width: 100%;
+	    top: 50%;
+	    transform: translateY(-50%);
+    }
+    </style>
+</head>
+
+<body>
+    <div class="div1">
+        <span>div1</span>
+    </div>
+    <div class="div2">
+        <span>div2</span>
+    </div>
+    <div class="div3">
+        <span>div3<br>div3<br>div3</span>
+    </div>
+    <div class="div4">
+        <span>div4<br>div4<br>div4</span>
+    </div>
+    <div class="div5">
+        <span>div5<br>div5<br>div5</span>
+    </div>
+
+</body>
+
+</html>
