@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>可拖拽边界</title>
+    <meta charset="utf-8">
+    <style>
+    	.header{
+			height: 150px;
+			background-color: gray;
+    	}
+    	.footer{
+			height: 150px;
+			background-color: gray;
+    	}
+    	.content{
+			height: 400px;
+			font-size: 0;
+    	}
+    	.content div.left,.content div.right{
+    		display: inline-block;
+		    font-size: 15px;
+		    line-height: 400px;
+		    text-align: center;
+    	}
+    	.content div p{
+			line-height: 1.3;
+		    display: inline-block;
+		    width: 80%;
+		    text-align: left;
+		    text-indent: 2em;
+    	}
+    	.left{
+    		height: 100%;
+			width: calc(50% - 10px);
+		    background-color: red;
+    	}
+    	.right{
+    		height: 100%;
+			width: calc(50% - 10px);
+		    background-color: green;
+    	}
+    	.content .border{
+    		width: 20px;
+		    background-color: darkgray;
+		    height: 100%;
+		    vertical-align: bottom;
+		    display: inline-flex;
+		    justify-content: center;
+		    align-items: center;
+		    cursor: col-resize;
+			user-select: none;
+    	}
+    	.border span{
+			font-size: 10px;
+    	}
+    </style>
+</head>
+
+<body>
+    <div class="header"></div>
+    <div class="content">
+        <div class="left">
+        	<p>
+        		这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文字。
+        	</p>
+        </div>
+        <div class="border" onmousedown="dragStart(event)" onmousemove="dragMove(event)" 
+        	onmouseup="dragEnd(event)" onmouseout="dragEnd(event)">
+        	<span>&#8596</span>
+        </div>
+        <div class="right">
+        	<p>
+        		这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文字。
+        	</p>
+        </div>
+    </div>
+    <div class="footer"></div>
+
+    <script>
+    	var DragFlag = false, move_start_x = -1;
+    	function dragStart(event){
+    		var ev = event || window.event;
+    		DragFlag = true;
+    		move_start_x = ev.clientX;
+    		console.log("mousedown",move_start_x)
+    	}
+    	function dragMove(event){
+    		var ev = event || window.event;
+    		var target = ev.target || ev.srcElement;
+    		var curX = target.offsetLeft, move = ev.clientX - move_start_x;
+    		move_start_x = ev.clientX;
+    		if(DragFlag){
+    			var contentDiv = target.parentNode;
+    			var width = contentDiv.clientWidth, start = contentDiv.offsetLeft, bar = target.clientWidth;
+    			var w1 = curX - start + move;
+    			var w2 = width - w1 - bar;
+    			if(w1<=0 || w2>=width-bar){w1=0;w2=width-bar};
+    			if(w1>=width-bar || w2<=0){w1=width-bar;w2=0};
+    			// w2<=0&&(w2=0;w1=width-bar);
+    			// w2>=width-bar&&(w2=width-bar;w1=0);
+    			target.nextElementSibling.style.width = w2 + "px";
+    			target.previousElementSibling.style.width = w1 + "px";
+    			
+    			// console.log("mousemove",curX,start)
+    		}
+    		
+    	}
+    	function dragEnd(event){
+    		var ev = event || window.event;
+    		DragFlag = false;
+    		console.log("mouseup")
+    	}
+    </script>
+</body>
+
+</html>
