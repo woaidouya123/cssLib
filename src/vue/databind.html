@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<h1 v-bind="name"></h1>
+	<input type="text" v-model="name" />
+	
+<script>
+	class Dep {
+		
+		constructor(){
+			this.subs = []
+		}
+		//增加订阅者
+		addSub(sub){
+			this.subs.push(sub);
+		}
+        //判断是否增加订阅者
+		depend () {
+		    if (Dep.target) {
+		     	this.addSub(Dep.target)
+		    }
+		}
+
+		//通知订阅者更新
+		notify(){
+			this.subs.forEach((sub) =>{
+				sub.update()
+			})
+		}
+		
+	}
+	Dep.target = null;
+
+	class Watcher {
+		constructor(vm,exp,cb){
+		    this.vm = vm;
+		    this.exp = exp;
+		    this.cb = cb;
+		    this.value = this.get();  // 将自己添加到订阅器的操作
+		}
+		get(){
+			Dep.target = this;  // 缓存自己
+        	let value = this.vm.data[this.exp]  // 强制执行监听器里的get函数
+        	Dep.target = null;  // 释放自己
+        	return value;
+		}
+		update(){
+			let value = this.vm.data[this.exp];
+        	let oldVal = this.value;
+        	if (value !== oldVal) {
+                this.value = value;
+                this.cb.call(this.vm, value, oldVal);
+			}
+		}
+	}
+	
+	function myVue (data, el, exp) {
+	    this.data = data;
+	    observable(data);                      //将数据变的可观测
+	    el.innerHTML = this.data[exp];           // 初始化模板数据的值
+	    new Watcher(this, exp, function (value) {
+	        el.innerHTML = value;
+	    });
+	    return this;
+	}
+
+	var ele = document.querySelector('#name');
+	var input = document.querySelector('input');
+	
+    var myVue = new myVue({
+		name: 'hello world'
+	}, ele, 'name');
+ 	
+	//改变输入框内容
+    input.oninput = function (e) {
+    	myVue.data.name = e.target.value
+    }
+	/**
+	 * 把一个对象的每一项都转化成可观测对象
+	 * @param { Object } obj 对象
+	 */
+	function observable (obj) {
+		if (!obj || typeof obj !== 'object') {
+        	return;
+    	}
+		let keys = Object.keys(obj);
+		keys.forEach((key) =>{
+			defineReactive(obj,key,obj[key])
+		})
+		return obj;
+	}
+	/**
+	 * 使一个对象转化成可观测对象
+	 * @param { Object } obj 对象
+	 * @param { String } key 对象的key
+	 * @param { Any } val 对象的某个key的值
+	 */  
+	function defineReactive (obj,key,val) {
+		let dep = new Dep();
+		Object.defineProperty(obj, key, {
+			get(){
+				dep.depend();
+				console.log(`${key}属性被读取了`);
+				return val;
+			},
+			set(newVal){
+				val = newVal;
+				console.log(`${key}属性被修改了`);
+				dep.notify()                    //数据变化通知所有订阅者
+			}
+		})
+	}
+	var loadModel = function(){
+		myVue(data, el, exp)
+	};
+	document.addEventListener( "DOMContentLoaded", function(){
+		loadModel();
+		document.removeEventListener("DOMContentLoaded", arguments.callee);
+	} );
+	
+</script>
+</body>
+</html>
