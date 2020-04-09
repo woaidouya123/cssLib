@@ -10,6 +10,7 @@ app.use('/save', express.static('save'));
 app.use('/static', express.static('static'));
 app.use('/images', express.static('../images'));
 app.use('/markdown', express.static('../markdown'));
+app.use('/cssdemo', express.static('../cssDemo'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ dest: './tmp/'}).array('file'));
  

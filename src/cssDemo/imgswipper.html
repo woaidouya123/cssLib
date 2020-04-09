@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>imgswipper</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="target-densitydpi=320,width=640,user-scalable=no">
+	<style>
+		.show-div{
+			width: 300px;
+			height: 300px;
+			overflow: hidden;
+		}
+		.swipper-div{
+			white-space: nowrap;
+			font-size: 0px;
+		}
+		.img-div{
+			width: 300px;
+			height: 300px;
+			display: inline-block;
+		}
+		.swipper-img{
+			width: 300px;
+			height: 100%;
+			user-drag:none;
+			user-select: none;
+			-webkit-user-select:none;
+			-webkit-user-drag:none;
+		}
+	</style>
+</head>
+<body>
+	<div class="show-div">
+		<div class="swipper-div">
+			<div class="img-div">
+				<img src="../images/nkss2.png" alt="" class="swipper-img">
+			</div>
+			<div class="img-div">
+				<img src="../images/nkss2.png" alt="" class="swipper-img">
+			</div>
+			<div class="img-div">
+				<img src="../images/nkss2.png" alt="" class="swipper-img">
+			</div>
+			<div class="img-div">
+				<img src="../images/nkss2.png" alt="" class="swipper-img">
+			</div>
+			<div class="img-div">
+				<img src="../images/nkss2.png" alt="" class="swipper-img">
+			</div>
+	</div>
+	</div>
+	
+	<script>
+		var cur = 0, startX, startMargin, moveFlag = false;
+		window.onload = function(){
+			var imgDivs = document.querySelectorAll(".img-div"),
+				swipperDiv = document.querySelector(".swipper-div");
+			imgDivs.forEach(function(div,index){
+				['mousedown','touchstart'].forEach(function(eventname){
+					div.addEventListener(eventname,function(event){
+						var ev = event || window.event;
+						var target = ev.target || ev.srcElement;
+						if(!moveFlag){
+							startX = ev.clientX || ev.changedTouches[0].clientX;
+							startMargin = parseInt(target.parentNode.parentNode.style.marginLeft) || 0;
+							moveFlag = true;
+						}
+						
+					})
+				});
+
+				['mousemove','touchmove'].forEach(function(eventname){
+					div.addEventListener(eventname,function(event){
+						var ev = event || window.event;
+						var target = ev.target || ev.srcElement;
+						if(moveFlag){
+							var nowX = ev.clientX || ev.changedTouches[0].clientX;
+							target.parentNode.parentNode.style.transition = "";
+							target.parentNode.parentNode.style.marginLeft =
+							startMargin + nowX - startX + "px";
+						}
+						
+					})
+				});
+				['mouseout','mouseup','touchend'].forEach(function(eventname){
+					div.addEventListener(eventname,function(event){
+						var ev = event || window.event;
+						var target = ev.target || ev.srcElement;
+						if(moveFlag){
+							moveFlag = false;
+							target.parentNode.parentNode.style.transition = "margin-left 0.5s";
+							adjustMarginLeft();
+						}
+						
+					})
+				});
+				['click'].forEach(function(eventname){
+					div.addEventListener(eventname,function(event){
+						var ev = event || window.event;
+						var target = ev.target || ev.srcElement;
+						if(!moveFlag){
+							if(ev.clientX - target.offsetLeft > target.scrollWidth/2){
+								var preMargin = parseInt(swipperDiv.style.marginLeft) || 0;
+								swipperDiv.style.marginLeft = preMargin - target.scrollWidth/2 - 1 + "px";
+								adjustMarginLeft();
+							}else{
+								var preMargin = parseInt(swipperDiv.style.marginLeft) || 0;
+								swipperDiv.style.marginLeft = preMargin + target.scrollWidth/2 + 1 + "px";
+								adjustMarginLeft();
+							}
+						}
+						
+					})
+				});
+			})
+
+			// 自动调整方法
+			function adjustMarginLeft(){
+				var divWidth = imgDivs[0].scrollWidth;
+				var preMargin = parseInt(swipperDiv.style.marginLeft) || 0;
+				var cur = Math.round(preMargin/divWidth);
+				cur = cur > 0?0:cur<1-imgDivs.length?1-imgDivs.length:cur;
+				swipperDiv.style.marginLeft = cur*divWidth + "px";
+			}
+		}
+	</script>
+	
+</body>
+</html>
