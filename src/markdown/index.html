@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Marked in the browser</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div id="dir">
+    </div>
+    <div id="content"></div>
+    <script src="./marked.js"></script>
+    <script>
+        var Tiltles = [], Radios=[], Texts = [];
+        var canrun = true;
+        function loadXMLDoc() {
+            var xmlhttp;
+            var txt, x, i;
+            if (window.XMLHttpRequest) {
+                // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {
+                // IE6, IE5 浏览器执行代码
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    xmlDoc = xmlhttp.responseText;
+                    document.getElementById('content').innerHTML =
+                        marked(xmlDoc);
+                        genDir(parseTitle());
+                        scrollToDir();
+                        addCopyButton();
+                }
+            }
+            xmlhttp.open("GET", "./hello.md", true);
+            xmlhttp.send();
+        }
+        loadXMLDoc();
+
+        // 解析页面获取标题信息
+        function parseTitle() {
+            var titles = [];
+            var nodes = document.getElementById("content").children;
+            for(var i=0;i<nodes.length;i++){
+                if(/^H\d$/.test(nodes[i].tagName)){
+                    Tiltles.push(nodes[i]);
+                    Texts.push(nodes[i].id);
+                    titles.push({
+                        "tag":nodes[i].tagName,
+                        "text":nodes[i].id
+                    })
+                }
+            }
+            return titles;
+        }
+
+        // 生成目录dir
+        function genDir(list) {
+            var dir = document.getElementById("dir"), label, radio, span;
+            for(var i=0;i<list.length;i++){
+                label = document.createElement("label");
+                radio = document.createElement("input");
+                radio.name = "cur_dir";
+                radio.type = "radio";
+                radio.addEventListener("change",function(event){
+                    var ev = event || window.event;
+                    var target = ev.target || ev.srcElement;
+                    var link = document.createElement("a");
+                    link.href="#"+target.value;
+                    canrun = false;
+                    link.click();
+                    // canrun = true;
+                    setTimeout(function(){
+                        canrun = true;
+                    },100)
+                })
+                Radios.push(radio);
+                span = document.createElement("span");
+                span.innerText = radio.value = list[i].text;
+                label.appendChild(radio);
+                label.appendChild(span);
+                dir.appendChild(label);
+            }
+        }
+
+        // 监听屏幕滚动
+        function scrollToDir() {
+            var scrollTop =  document.body.scrollTop || document.documentElement.scrollTop;
+            var seeHeight = document.documentElement.clientHeight;
+            for(var i=0; i<Tiltles.length; i++){
+                if(Tiltles[i].offsetTop > scrollTop){
+                    Radios[i].checked=true;
+                    return;
+                }
+            }
+        }
+        
+        // 绑定屏幕滚动个事件
+        window.onscroll = function () {
+            if(!canrun){
+                return ;
+            }
+            canrun = false;
+            setTimeout(function () {
+                scrollToDir();
+                canrun= true;
+            },100);
+
+        }
+
+        // 代码块增加复制功能
+        function addCopyButton(){
+            var codes = document.getElementsByTagName("code"), btn;
+            for(var i=0;i<codes.length;i++){
+                btn = document.createElement("button");
+                btn.innerHTML = "copy";
+                btn.addEventListener("click",copyCode);
+                codes[i].parentNode.appendChild(btn);
+            }
+        }
+
+        // 代码复制事件
+        function copyCode(event) {
+            var ev = event || window.event;
+            var btn = ev.target || ev.srcElement;
+            target = btn.previousElementSibling;
+            var selection = window.getSelection();
+            if (window.clipboardData) {
+                var copytext = target.innerText;
+                window.clipboardData.setData ("Text", copytext);
+                return false;
+            } else {
+                var copytext = target.innerText;
+                var textarea = document.createElement('textarea');
+                textarea.style.display='block';
+                textarea.style.position='absolute';
+                textarea.style.left='-99999px';
+                document.body.appendChild(textarea);
+                textarea.value = copytext;
+                textarea.select();
+                document.execCommand("copy")
+                window.setTimeout(function() {
+                    document.body.removeChild(textarea);
+                },0);
+            }
+            btn.innerText = "复制成功";
+            setTimeout(function(){
+                btn.innerText = "copy";
+            },1000)
+        }
+
+    </script>
+</body>
+
+</html>

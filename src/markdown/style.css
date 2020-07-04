@@ -1,0 +1,124 @@
+#dir{
+    position: fixed;
+    width: 300px;
+    left: 250px;
+    top: 200px;
+    text-align: right;
+    border-right: 2px solid;
+    padding-right: 10px;
+}
+#dir label{
+    display: block;
+}
+#dir input[type=radio]{
+    display: none;
+}
+#dir span{
+    display: inline-block;
+    border: 2px solid white;
+    padding: 3px 0 3px 5px;
+    margin: 5px 0;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+    cursor: pointer;
+}
+#dir span:hover{
+    border: 2px solid black;
+    padding: 3px 0 3px 5px;
+    border-right-color: white;
+    transform: translateX(12px);
+    animation: choose 0.5s ease-in-out;
+}
+#dir label input:checked + span{
+    border: 2px solid black;
+    padding: 3px 0 3px 5px;
+    border-right-color: white;
+    transform: translateX(12px);
+}
+#dir label input:checked + span:hover{
+    border: 2px solid black;
+    padding: 3px 0 3px 5px;
+    border-right-color: white;
+    transform: translateX(12px);
+    animation: none;
+}
+#dir a{
+    display: block;
+    padding: 5px 0;
+    text-decoration: none;
+    color: blueviolet;
+    transition: transform 0.2s ease-in-out;
+}
+#dir a:hover{
+    border: 2px solid black;
+    border-right-color: white;
+    transform: translateX(12px);
+}
+#content{
+    margin-left: 600px;
+}
+@keyframes choose{
+    0%{
+        border: 2px solid white;
+        transform: translateX(0px);
+    }
+    25%{
+        transform: translateX(12px);
+    }
+    50%{
+        border-top-color: transparent;
+    }
+    75%{
+        border-left-color: transparent;
+    }
+    100%{
+        border-bottom-color: transparent;
+    }
+}
+
+/* 代码样式 */
+pre{
+    position: relative;
+    width: 800px;
+}
+pre code{
+    width: 800px;
+    box-sizing: border-box;
+    display: block;
+    background: black;
+    padding: 10px;
+    color: white;
+    font-size: 20px;
+    overflow-x: auto;
+    border-radius: 10px;
+}
+code.language-js::before{
+    content: "js";
+    display: block;
+    text-align: left;
+    color: gray;
+    user-select: none;
+    font-size: 15px;
+    transform: translateX(-6px) translateY(-8px);
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+}
+code+button{
+    display: block;
+    color: gray;
+    user-select: none;
+    font-size: 15px;
+    border: none;
+    outline: none;
+    background: none;
+    position: absolute;
+    right: 0;
+    top: 5px;
+    cursor: pointer;
+}
+code+button:hover{
+    color: white;
+}
