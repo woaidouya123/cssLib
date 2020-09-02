@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>自定义Html标签</title>
+	<meta charset="utf-8">
+</head>
+<body>
+<my-element src="../images/nkss1.jpeg"></my-element>
+<script>
+	class MyElement extends HTMLElement{
+		get src(){
+			return this.getAttribute("src");
+		}
+		set src(val){
+			this.img.setAttribute("src", val);
+		}
+		constructor(){
+			super();
+			var shadow = this.attachShadow({mode:'open'})
+			this.img = document.createElement("img");
+			this.src = this.src;
+			shadow.appendChild(this.img);
+		}
+	}
+	window.customElements.define("my-element", MyElement)
+</script>
+</body>
+</html>
