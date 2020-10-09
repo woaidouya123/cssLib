@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>blob</title>
+</head>
+<body>
+<!-- <video id="video" controls="" playsinline="" >
+        <source src="blob:https://www.bilibili.com/855cf780-501f-4cd3-b655-d82bf33f8387" type="video/mp4">
+    </video> -->
+    <input id="upload" type="file" />
+<img id="preview" src="" alt="预览"/>
+<script>
+	const upload = document.querySelector("#upload");
+const preview = document.querySelector("#preview");
+
+upload.onchange = function() {
+  const file = upload.files[0]; //File对象
+  console.log(file)
+  const src = URL.createObjectURL(file); 
+  preview.src = src;
+};
+</script>
+</body>
+</html>
