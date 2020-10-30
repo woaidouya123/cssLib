@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>进度条</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+    .container {
+        width: 300px;
+        font-size: 10px;
+    }
+
+    .container .process-bar {
+        width: 100%;
+        height: 1em;
+        background-color: gray;
+        border-radius: .5em;
+        margin-top: 4em;
+        position: relative;
+    }
+
+    .container .process-bar .process-hidebar {
+        height: 1em;
+        background-color: blue;
+        border-radius: .5em;
+        width: 80%;
+        min-width: 2em;
+        display: inline-block;
+        transition: width .3s;
+        vertical-align: top;
+    }
+
+    .container .process-bar .process-dot {
+        box-sizing: border-box;
+        height: 4em;
+        width: 4em;
+        border: 1em solid rgba(0, 0, 255, 0.3);
+        border-radius: 50%;
+        display: inline-block;
+        position: absolute;
+        top: -1.5em;
+        margin-left: -3em;
+    }
+
+    .container .process-bar .process-dot .process-dot-content {
+        box-sizing: border-box;
+        height: 100%;
+        width: 100%;
+        border: .5em solid blue;
+        border-radius: 50%;
+        background-color: white;
+    }
+
+    .container .process-bar .process-dot span.process-text {
+        font-size: 1em;
+        position: absolute;
+        top: -3em;
+        font-weight: bold;
+        color: blue;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="process-bar"><div class="process-hidebar"></div><div class="process-dot">
+                <div class="process-dot-content"></div>
+                <span class="process-text">80%</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <button onclick="change(0)">-</button>
+    <button onclick="change(1)">+</button>
+    <script type="text/javascript">
+    	let cp = 80;
+    	function change(op){
+    		let bar = document.getElementsByClassName("process-hidebar")[0],
+    			text = document.getElementsByClassName("process-text")[0];
+    		op&&cp<100&&(cp+=10);
+    		!op&&cp>0&&(cp-=10);
+    		bar.style.width = text.innerHTML = cp + "%";
+    	}
+    </script>
+</body>
+
+</html>
