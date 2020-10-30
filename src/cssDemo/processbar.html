@@ -77,9 +77,21 @@
     	function change(op){
     		let bar = document.getElementsByClassName("process-hidebar")[0],
     			text = document.getElementsByClassName("process-text")[0];
-    		op&&cp<100&&(cp+=10);
-    		!op&&cp>0&&(cp-=10);
-    		bar.style.width = text.innerHTML = cp + "%";
+    		op&&cp<100&&(numChangeAnim(cp+10,500,()=>{bar.style.width = text.innerHTML = cp + "%";}));
+    		!op&&cp>0&&(numChangeAnim(cp-10,500,()=>{bar.style.width = text.innerHTML = cp + "%";}));
+    		
+    	}
+    	function numChangeAnim(value,time,fn){
+    		let  count = time/100, i = 1, d = (value - cp)/count;
+    		let sI = setInterval(()=>{
+    			if(i <= count){
+    				cp += d;
+    				i++;
+    				fn();
+    			}else{
+    				clearInterval(sI);
+    			}
+    		},100)
     	}
     </script>
 </body>
