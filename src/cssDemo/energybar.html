@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>能量条</title>
+	<meta charset="utf-8">
+	<style>
+		.container{
+			width: 300px;
+			background-image:linear-gradient(to right, #23be7b, #fff);
+			border: 1px solid #23be7b;
+			display: flex;
+			justify-content: flex-start;
+			position: relative;
+			height: 1em;
+		}
+		.container .smallbar{
+			height: 1em;
+			width: 3.33%;
+			box-sizing: border-box;
+			border:1px solid white;
+			background-color: transparent;
+		}
+		.container .hidebar{
+			background-color: white;
+			height: 1em;
+			flex: 1;
+		}
+		.container .percent-text{
+			position: absolute;
+			right: 10px;
+			color: #23be7b;
+			top: 0px;
+			height: 1em;
+			line-height: 1em;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="smallbar"></div>
+		<div class="percent-text">
+			50%
+		</div>
+	</div>
+    <button onclick="change(0)">-</button>
+    <button onclick="change(1)">+</button>
+    <script type="text/javascript">
+    	let cp = 50;
+    	function change(op){
+    		let bars = document.getElementsByClassName("smallbar"),
+    			text = document.getElementsByClassName("percent-text")[0],
+    			container = document.getElementsByClassName("container")[0];
+    		if(op&&cp<100){
+    			for(let i=0;i<3;i++){
+    				let node = document.createElement("div");
+    				node.className = "smallbar";
+    				container.appendChild(node);
+    			}
+    			cp += 10;
+    			text.innerHTML = cp + "%";
+    		};
+    		if(!op&&cp>0){
+    			for(let i=0;i<3;i++){
+    				let node = container.getElementsByClassName("smallbar")[0];
+    				container.removeChild(node);
+    			}
+    			cp -= 10;
+    			text.innerHTML = cp + "%";
+    		};
+    		
+    	}
+    </script>
+	
+</body>
+</html>
