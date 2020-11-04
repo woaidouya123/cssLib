@@ -52,6 +52,7 @@
 		<div class="smallbar"></div>
 		<div class="smallbar"></div>
 		<div class="smallbar"></div>
+		<div class="hidebar"></div>
 		<div class="percent-text">
 			50%
 		</div>
@@ -63,12 +64,13 @@
     	function change(op){
     		let bars = document.getElementsByClassName("smallbar"),
     			text = document.getElementsByClassName("percent-text")[0],
+    			hidebar = document.getElementsByClassName("hidebar")[0],
     			container = document.getElementsByClassName("container")[0];
     		if(op&&cp<100){
     			for(let i=0;i<3;i++){
     				let node = document.createElement("div");
     				node.className = "smallbar";
-    				container.appendChild(node);
+    				container.insertBefore(node,hidebar);
     			}
     			cp += 10;
     			text.innerHTML = cp + "%";
