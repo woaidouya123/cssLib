@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<style>
+    .container{
+        position: relative;
+        width: fit-content;
+        
+    }
+    .container svg{
+        border: 1px solid black;
+    }
+    div.op{
+        position: absolute;
+        width: 960px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: gainsboro;
+        transition: all .3s;
+        height: 50px;
+        overflow: hidden;
+        top: 1px;
+        left: 1px;
+    }
+    div.op span{
+        width: 20px;
+        height: 20px;
+    }
+
+    .blue{
+        background-color: blue;
+    }
+    .red{
+        background-color: red;
+    }
+    .green{
+        background-color: green;
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="op">
+            <!-- <span draggable=true class="blue"></span>
+            <span draggable=true class="red"></span>
+            <span draggable=true class="green"></span> -->
+        </div>
+        <svg width="960" height="500"></svg>
+        <input id="reset" type="button" value="resetRoom" />
+    </div>
+    
+    <script>
+
+    // 初始数据
+    var options = [
+        "blue","red","green"
+    ]
+    var data = [{
+            type: "red",
+            pos: [100, 100],
+            w:10,
+            h:20
+        },
+        {
+            type: "blue",
+            pos: [200, 100],
+            w:200,
+            h:100
+        },
+        {
+            type: "green",
+            pos: [500, 100],
+            w:20,
+            h:20
+        }
+    ]
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"), //设置宽度
+        height = +svg.attr("height"),
+        transform = d3.zoomIdentity; //获取抓取对象时的起始点
+    d3.select(".op")
+        .selectAll("span")
+        .data(options)
+        .enter().append("span")
+        .attr("draggable",true)
+        .attr("class",function(d){return d})
+        .on("dragstart", function(d){
+            var target = d3.event.target || d3.event.srcElement, bound = target.getBoundingClientRect();
+            d3.event.dataTransfer.setData("type", d);
+            d3.event.dataTransfer.setData("left", d3.event.clientX - bound.left);
+            d3.event.dataTransfer.setData("top", d3.event.clientY - bound.top);
+        })
+    svg.on("drop", function(){
+        d3.event.preventDefault();
+        var target = d3.event.target || d3.event.srcElement, bound = target.getBoundingClientRect();
+        data.push({
+            type : d3.event.dataTransfer.getData("type"),
+            pos : [event.clientX - bound.left - d3.event.dataTransfer.getData("left") - transform.x,
+             event.clientY - bound.top - d3.event.dataTransfer.getData("top") - transform.y],
+            w: 20,
+            h:20
+        });
+        drawIt(data, g)
+    })
+    svg.on("dragover", function(){
+        event.preventDefault();
+    })
+
+    // 获取svg绘图域
+    var g = svg.append("g");
+    var select_g = svg.append("g");
+    d3.select("body").on("click",function(){
+        select_g.selectAll("rect").remove();
+        select_g.selectAll("circle").remove();
+    })
+    drawIt(data, g)
+
+    // 绘制方法
+    function drawIt(data, g){
+        g.selectAll("rect")
+            .data(data)
+            .enter().append("rect")
+            .attr("x", function(d) { return d.pos[0]; })
+            .attr("y", function(d) { return d.pos[1]; })
+            .attr("width", function(d) { return d.w; })
+            .attr("height", function(d) { return d.h })
+            .style("fill", function(d) { return d.type })
+            .call(d3.drag()
+            .on("drag", dragged))
+            .on("click",selected);
+    }
+    svg.call(d3.zoom()
+        .scaleExtent([1 / 2, 8])
+        .on("zoom", zoomed)
+        ).on("dblclick.zoom", null);
+
+    function zoomed() {
+        console.log(d3.event)
+        g.attr("transform", d3.event.transform);
+        select_g.attr("transform", d3.event.transform);
+        transform = d3.event.transform;
+        if(d3.event.transform.k != 1){
+            d3.select(".op").style("height", 0)
+        }else{
+            d3.select(".op").style("height", "50px")
+        }
+    }
+
+    function dragged(d) {
+        d3.select(this).attr("x", d.pos[0] += d3.event.dx).attr("y", d.pos[1] += d3.event.dy);
+    }
+
+    d3.select("#reset").on("click",function(){
+        g.call(d3.zoom().transform, d3.zoomIdentity);;
+        d3.select(".op").style("height", "50px")
+    })
+
+    const padding = 5, radius = 3, dot_color = "gray", line_color = "gainsboro", min_width = min_height = 10;
+    // 元素选中事件
+    function selected(d) {
+        console.log(d, d3.event);
+        d3.event.cancelBubble = true;
+        // 清除之前选中效果
+        select_g.selectAll("rect").remove();
+        select_g.selectAll("circle").remove();
+        
+
+        var self = this;// 保存当前对象
+         rect = select_g.append("rect")
+            .attr("x", d.pos[0] - padding)
+            .attr("y", d.pos[1] - padding)
+            .attr("width",d.w + 10)
+            .attr("height", d.h + 10)
+            .style("fill", "rgba(0,0,0,0)")
+            .style("stroke-width",1)
+            .style("stroke",line_color)
+            .call(d3.drag()
+                .on("drag", null)),
+        // 生成可拖动节点
+        // 左上
+        lu_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] - padding)
+            .attr("cy", d.pos[1] - padding)
+            .attr("r", radius)
+            .style("cursor", "nwse-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("x", d.pos[0] += d3.event.dx)
+                        .attr("y", d.pos[1] += d3.event.dy)
+                        .attr("width", d.w -= (d.w>d3.event.dx?d3.event.dx:0))
+                        .attr("height", d.h -= (d.h>d3.event.dy?d3.event.dy:0));
+                    changeSelected();
+                }));
+        // 上
+        u_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] + d.w/2)
+            .attr("cy", d.pos[1] - padding)
+            .attr("r", radius)
+            .style("cursor", "ns-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("y", d.pos[1] += d3.event.dy)
+                        .attr("height", d.h -= d3.event.dy);
+                    changeSelected();
+                }));
+        // 右上
+        ru_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] + d.w + padding)
+            .attr("cy", d.pos[1] - padding)
+            .attr("r", radius)
+            .style("cursor", "nesw-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("y", d.pos[1] += d3.event.dy)
+                        .attr("width", d.w += d3.event.dx)
+                        .attr("height", d.h -= d3.event.dy);
+                    changeSelected();
+                }));
+        // 右
+        r_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] + d.w + padding)
+            .attr("cy", d.pos[1] + d.h/2)
+            .attr("r", radius)
+            .style("cursor", "ew-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("width", d.w += d3.event.dx)
+                    changeSelected();
+                }));
+        // 右下
+        rd_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] + d.w + padding)
+            .attr("cy", d.pos[1] + d.h + padding)
+            .attr("r", radius)
+            .style("cursor", "nwse-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("width", d.w += d3.event.dx)
+                        .attr("height", d.h += d3.event.dy);
+                    changeSelected();
+                }));
+        // 下
+        d_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] + d.w/2)
+            .attr("cy", d.pos[1] + d.h + padding)
+            .attr("r", radius)
+            .style("cursor", "ns-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("height", d.h += d3.event.dy);
+                    changeSelected();
+                }));
+        
+        // 左下
+        ld_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] - padding)
+            .attr("cy", d.pos[1] + d.h + padding)
+            .attr("r", radius)
+            .style("cursor", "nesw-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("x", d.pos[0] += d3.event.dx)
+                        .attr("width", d.w -= d3.event.dx)
+                        .attr("height", d.h += d3.event.dy);
+                    changeSelected();
+                }));
+        // 左
+        l_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] - padding)
+            .attr("cy", d.pos[1] + d.h/2)
+            .attr("r", radius)
+            .style("cursor", "ew-resize")
+            .style("fill", dot_color)
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // 更新内容
+                    d3.select(self)
+                        .attr("x", d.pos[0] += d3.event.dx)
+                        .attr("width", d.w -= d3.event.dx)
+                    changeSelected();
+                }));
+        // 旋转
+        rotate_circle = select_g.append("circle")
+            .attr("cx", d.pos[0] + d.w/2)
+            .attr("cy", d.pos[1] - padding -30)
+            .attr("r", radius)
+            .style("cursor", "grab")
+            .style("fill", dot_color)
+            .on("mousedown",function(){
+                console.log(d3.event)
+            })
+            .call(d3.drag()
+                .on("drag", function(select_d){
+                    // console.log(Math.atan((d3.event.x - d.pos[0] - d.w/2)/(d.pos[1] - d3.event.y))/Math.PI*180);
+                    var angel = Math.asin((d3.event.x - d.pos[0] - d.w/2)/Math.sqrt(Math.pow(d3.event.x - d.pos[0] - d.w/2,2)+Math.pow(d3.event.y-d.pos[1]-d.h/2,2)))/Math.PI*180;
+                    console.log(angel, d3.event.x ,d3.event.y)
+                    select_g.attr("transform", "rotate("+angel+")")
+                    // 更新内容
+                    d3.select(self)
+                        .attr("transform", "rotate("+angel+")")
+                    changeSelected();
+                }));
+        
+        function changeSelected(){
+            // 更新选择框
+            select_g.style("transform-origin",(d.pos[0] + d.w/2) + "px " + (d.pos[1] + d.h/2) + "px");
+            d3.select(self).style("transform-origin",(d.pos[0] + d.w/2) + "px " + (d.pos[1] + d.h/2) + "px");
+            rect
+                .attr("x", d.pos[0] - padding)
+                .attr("y", d.pos[1] - padding)
+                .attr("width", d.w + 10)
+                .attr("height", d.h + 10);
+            lu_circle
+                .attr("cx", d.pos[0] - padding)
+                .attr("cy", d.pos[1] - padding);
+            u_circle
+                .attr("cx", d.pos[0] + d.w/2)
+                .attr("cy", d.pos[1] - padding);
+            ru_circle
+                .attr("cx", d.pos[0] + d.w + padding)
+                .attr("cy", d.pos[1] - padding);
+            r_circle
+                .attr("cx", d.pos[0] + d.w + padding)
+                .attr("cy", d.pos[1] + d.h/2);
+            rd_circle
+                .attr("cx", d.pos[0] + d.w + padding)
+                .attr("cy", d.pos[1] + d.h + padding);
+            d_circle
+                .attr("cx", d.pos[0] + d.w/2)
+                .attr("cy", d.pos[1] + d.h + padding);
+            ld_circle
+                .attr("cx", d.pos[0] - padding)
+                .attr("cy", d.pos[1] + d.h + padding);
+            l_circle
+                .attr("cx", d.pos[0] - padding)
+                .attr("cy", d.pos[1] + d.h/2);
+            // rotate_circle
+            //     .attr("cx", d.pos[0] + d.w/2)
+            //     .attr("cy", d.pos[1] - padding -30);
+        }
+    }
+    
+    </script>
+</body>
+
+</html>
