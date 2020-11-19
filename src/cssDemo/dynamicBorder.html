@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>动态边框闪烁实现</title>
+    <meta charset="utf-8">
+    <style>
+    .container {
+        height: 50px;
+        width: 200px;
+    }
+
+    .btn {
+        height: 100%;
+        width: 100%;
+        background: transparent;
+        border: 1px solid rgba(0,209,178,0.35);
+        outline: none;
+        position: relative;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .btn:hover .btn-borders div {
+        transform: scale(1);
+    }
+
+    .btn:hover .btn-borders .border-top {
+        transition: all .3s .3s linear;
+    }
+    .btn:hover .btn-borders .border-right {
+        transition: all .3s .3s linear;
+    }
+    .btn:hover .btn-borders .border-bottom {
+        transition: all .3s 0s linear;
+    }
+    .btn:hover .btn-borders .border-left {
+        transition: all .3s 0s linear;
+    }
+
+    .btn-borders {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+    }
+
+    .btn-borders .border-top {
+        height: 1px;
+        width: 100%;
+        background: rgb(0,209,178);
+        position: absolute;
+        top: -1px;
+        transform: scale(0);
+        transition: all .3s 0s linear;
+        transform-origin: left;
+    }
+
+    .btn-borders .border-right {
+        height: 100%;
+        width: 1px;
+        background: rgb(0,209,178);
+        position: absolute;
+        right: -1px;
+        transform: scale(0);
+        transition: all .3s 0s linear;
+        transform-origin: bottom;
+    }
+
+    .btn-borders .border-bottom {
+        height: 1px;
+        width: 100%;
+        background: rgb(0,209,178);
+        position: absolute;
+        bottom: -1px;
+        transform: scale(0);
+        transition: all .3s .3s linear;
+        transform-origin: left;
+    }
+
+    .btn-borders .border-left {
+        height: 100%;
+        width: 1px;
+        background: rgb(0,209,178);
+        position: absolute;
+        left: -1px;
+        transform: scale(0);
+        transition: all .3s .3s linear;
+        transform-origin: bottom;
+    }
+    .btn-text{
+        color: rgb(0,209,178);
+    }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <button class="btn">
+            <div class="btn-borders">
+                <div class="border-top"></div>
+                <div class="border-right"></div>
+                <div class="border-bottom"></div>
+                <div class="border-left"></div>
+            </div>
+            <span class="btn-text">Start</span>
+        </button>
+    </div>
+
+</body>
+
+</html>
