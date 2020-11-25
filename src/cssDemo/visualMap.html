@@ -14,7 +14,7 @@
 <body>
 	<script src="../echarts/visualMap.js"></script>
 	<script>
-		var v = new _visualMap().setLimits(1,100).setColors('#f00','#00f');
+		var v = new _visualMap().setLimits(0,100).setColors('rgb(250,0,100)','rgb(0,255,0)');
 		var colors = v.getColor(new Array(100).fill(0).map((v,i)=>i+1));
 		var div;
 		for(var i=0;i<colors.length;i++){

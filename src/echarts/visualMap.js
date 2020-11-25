@@ -34,12 +34,8 @@
 
     // 设置颜色
     visualMap.prototype.setColors = function(s_color, e_color) {
-        var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
         if(s_color == null || e_color == null){
             throw Error("setColors method require two arguments.");
-        }
-        if (!reg.test(s_color) || !reg.test(e_color)) {
-            throw new Error("please use hsx color.")
         }
         this.s_color = colorToRgb(s_color);
         this.e_color = colorToRgb(e_color);
@@ -55,9 +51,15 @@
         if(data instanceof Array){
             res = [];
             for(i=0;i<data.length;i++){
+                if(data[i] < this.min || data[i] > this.max){
+                    throw Error("data must in [min, max].");
+                }
                 res.push('RGB('+calcColor(this.min, this.max, this.s_color, this.e_color, data[i]).join(",")+")");
             }
         }else{
+            if(data < this.min || data > this.max){
+                throw Error("data must in [min, max].");
+            }
             res = 'RGB('+calcColor(this.min, this.max, this.s_color, this.e_color, data).join(",")+")";
         }
         return res;
@@ -75,22 +77,31 @@
 
     // 颜色转换
     const colorToRgb = function(s) {
-        // 把颜色值变成小写
-        var color = s.toLowerCase();
-        // 如果只有三位的值，需变成六位，如：#fff => #ffffff
-        if (color.length === 4) {
-            var colorNew = "#";
-            for (let i = 1; i < 4; i += 1) {
-                colorNew += color.slice(i, i + 1).concat(color.slice(i, i + 1));
+        var reg_hsx = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/, reg_rgb = /^(rgb|RGB)\((\d){1,3},(\d){1,3},(\d){1,3}\)/;
+        if(reg_hsx.test(s)){
+            // 把颜色值变成小写
+            var color = s.toLowerCase();
+            // 如果只有三位的值，需变成六位，如：#fff => #ffffff
+            if (color.length === 4) {
+                var colorNew = "#";
+                for (let i = 1; i < 4; i += 1) {
+                    colorNew += color.slice(i, i + 1).concat(color.slice(i, i + 1));
+                }
+                color = colorNew;
             }
-            color = colorNew;
+            // 处理六位的颜色值，转为RGB
+            var colorChange = [];
+            for (let i = 1; i < 7; i += 2) {
+                colorChange.push(parseInt("0x" + color.slice(i, i + 2)));
+            }
+            return colorChange;
+        }else if(reg_rgb.test(s)){
+            return s.substring(4,s.length-1).split(",").map(v=>+v);
+        }else{
+            throw Error("setColors method require two arguments(hsx or rgb).");
         }
-        // 处理六位的颜色值，转为RGB
-        var colorChange = [];
-        for (let i = 1; i < 7; i += 2) {
-            colorChange.push(parseInt("0x" + color.slice(i, i + 2)));
-        }
-        return colorChange;
+
+        
     }
 
     return visualMap;
