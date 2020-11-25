@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>视觉映射</title>
+	<meta charset="utf-8">
+	<style>
+		div{
+			width: 2px;
+			height: 50px;
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	<script src="../echarts/visualMap.js"></script>
+	<script>
+		var v = new _visualMap().setLimits(1,100).setColors('#f00','#00f');
+		var colors = v.getColor(new Array(100).fill(0).map((v,i)=>i+1));
+		var div;
+		for(var i=0;i<colors.length;i++){
+			div = document.createElement("div");
+			div.style.backgroundColor = colors[i];
+			document.body.appendChild(div);
+		}
+	</script>
+</body>
+</html>
