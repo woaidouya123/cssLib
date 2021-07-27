@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<head>
+    <title>text</title>
+    <style>
+        .container {
+            width: 200px;
+            text-align: center;
+            height: 50px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            line-height: 50px;
+            font-size: 30px;
+        }
+
+        .bg {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #f00;
+            background-repeat: no-repeat;
+            background-size: cover;
+            animation: move 10s linear infinite;
+        }
+        @keyframes move {
+            from{
+                left: -100%;
+            }
+            to{
+                left: 100%;
+            }
+        }
+
+        .text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #000;
+            mix-blend-mode: lighten;
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="bg"></div>
+        <div class="text">这是测试文字</div>
+    </div>
+</body>
+
+</html>
