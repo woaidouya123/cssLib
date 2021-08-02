@@ -94,7 +94,7 @@
 						
 					})
 				});
-				['click'].forEach(function(eventname){
+				['click','doubleclick'].forEach(function(eventname){
 					div.addEventListener(eventname,function(event){
 						var ev = event || window.event;
 						var target = ev.target || ev.srcElement;

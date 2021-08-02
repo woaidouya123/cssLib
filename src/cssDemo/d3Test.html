@@ -42,9 +42,9 @@
 <body>
     <div class="container">
         <div class="op">
-            <!-- <span draggable=true class="blue"></span>
+            <span draggable=true class="blue"></span>
             <span draggable=true class="red"></span>
-            <span draggable=true class="green"></span> -->
+            <span draggable=true class="green"></span>
         </div>
         <svg width="960" height="500"></svg>
         <input id="reset" type="button" value="resetRoom" />
@@ -302,26 +302,26 @@
                     changeSelected();
                 }));
         // 旋转
-        rotate_circle = select_g.append("circle")
-            .attr("cx", d.pos[0] + d.w/2)
-            .attr("cy", d.pos[1] - padding -30)
-            .attr("r", radius)
-            .style("cursor", "grab")
-            .style("fill", dot_color)
-            .on("mousedown",function(){
-                console.log(d3.event)
-            })
-            .call(d3.drag()
-                .on("drag", function(select_d){
-                    // console.log(Math.atan((d3.event.x - d.pos[0] - d.w/2)/(d.pos[1] - d3.event.y))/Math.PI*180);
-                    var angel = Math.asin((d3.event.x - d.pos[0] - d.w/2)/Math.sqrt(Math.pow(d3.event.x - d.pos[0] - d.w/2,2)+Math.pow(d3.event.y-d.pos[1]-d.h/2,2)))/Math.PI*180;
-                    console.log(angel, d3.event.x ,d3.event.y)
-                    select_g.attr("transform", "rotate("+angel+")")
-                    // 更新内容
-                    d3.select(self)
-                        .attr("transform", "rotate("+angel+")")
-                    changeSelected();
-                }));
+        // rotate_circle = select_g.append("circle")
+        //     .attr("cx", d.pos[0] + d.w/2)
+        //     .attr("cy", d.pos[1] - padding -30)
+        //     .attr("r", radius)
+        //     .style("cursor", "grab")
+        //     .style("fill", dot_color)
+        //     .on("mousedown",function(){
+        //         console.log(d3.event)
+        //     })
+        //     .call(d3.drag()
+        //         .on("drag", function(select_d){
+        //             // console.log(Math.atan((d3.event.x - d.pos[0] - d.w/2)/(d.pos[1] - d3.event.y))/Math.PI*180);
+        //             var angel = Math.asin((d3.event.x - d.pos[0] - d.w/2)/Math.sqrt(Math.pow(d3.event.x - d.pos[0] - d.w/2,2)+Math.pow(d3.event.y-d.pos[1]-d.h/2,2)))/Math.PI*180;
+        //             console.log(angel, d3.event.x ,d3.event.y)
+        //             select_g.attr("transform", "rotate("+angel+")")
+        //             // 更新内容
+        //             d3.select(self)
+        //                 .attr("transform", "rotate("+angel+")")
+        //             changeSelected();
+        //         }));
         
         function changeSelected(){
             // 更新选择框

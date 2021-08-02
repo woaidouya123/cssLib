@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Insert title here</title>
+</head>
+
+<body>
+    <div id="divId1">
+        <img id="aa" src="http://pic37.nipic.com/20140113/8800276_184927469000_2.png" onclick="CopyImage()">
+    </div>
+</body>
+<script>
+function CopyImage() {
+    var range = document.createRange();
+    range.selectNode(document.getElementById('divId1'));
+    window.getSelection().addRange(range);
+    document.execCommand("Copy");
+}
+</script>
+
+</html>

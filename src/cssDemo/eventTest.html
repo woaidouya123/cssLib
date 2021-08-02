@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>eventTest</title>
+	<style>
+		#div1{
+			height: 500px;
+			width: 500px;
+			background-color: green;
+		}
+		#div2{
+			height: 300px;
+			width: 300px;
+			background-color: red;
+		}
+		#div3{
+			height: 100px;
+			width: 100px;
+			background-color: yellow;
+		}
+	</style>
+</head>
+<body>
+	<div id="div1">
+		<div id="div2">
+			<div id="div3">
+				
+			</div>
+		</div>
+	</div>
+	<script>
+		window.onload = function(){
+
+			// 捕获
+			// [...document.getElementsByTagName("div")].forEach(function(div){
+			// 	console.log(div);
+			// 	div.addEventListener("click",function(event){
+			// 		console.log(this.id)
+			// 	},true)
+			// })
+
+			// 冒泡
+			// [...document.getElementsByTagName("div")].forEach(function(div){
+			// 	console.log(div);
+			// 	div.addEventListener("click",function(event){
+			// 		console.log(this.id)
+			// 	},false)
+			// })
+
+			// 捕获拦截
+			// [...document.getElementsByTagName("div")].forEach(function(div){
+			// 	console.log(div);
+			// 	div.addEventListener("click",function(event){
+			// 		console.log(this.id)
+			// 		event.stopPropagation();
+			// 	},true)
+			// })
+			document.getElementsByTagName("div")[0].addEventListener("click",function(event){
+					console.log(this.id,event.target)
+					event.stopPropagation();
+				},true)
+
+			// 捕获冒泡
+			// [...document.getElementsByTagName("div")].forEach(function(div){
+			// 	console.log(div);
+			// 	div.addEventListener("click",function(event){
+			// 		console.log(this.id)
+			// 		event.stopPropagation();
+			// 	},false)
+			// })
+		}
+	</script>
+</body>
+</html>

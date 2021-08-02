@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>iscrollTest</title>
+	<meta charset="utf-8">
+	<style>
+		.header,.footer{
+			height: 200px;
+			background-color: gray;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.content{
+			counter-reset: section;
+		}
+		.content .item{
+			height: 400px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-bottom: 2px solid gray;
+		}
+		.content .item::before{
+			counter-increment: section;
+			content: counter(section);
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="header">
+		this is header
+	</div>
+	<div class="content" id="wrapper">
+		<div>
+			<div class="item"></div>
+			<div class="item"></div>
+			<div class="item"></div>
+		</div>
+	</div>
+	<div class="footer">
+		this is footer
+	</div>
+	<script src="./iscroll.js"></script>
+	<script>
+		var newScroll = new iScroll('wrapper',{
+			onScrollMove:function(){
+				console.log(this.x,this.y);
+			}
+		})
+	</script>
+</div>
+</body>
+</html>

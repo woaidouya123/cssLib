@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>防抖节流</title>
+    <meta charset="utf-8">
+</head>
+
+<body style="height: 5000px">
+</body>
+<script>
+var timeout = 100;
+//防抖debounce代码：
+function debounce(fn, delay) {
+    var timeout = null; // 创建一个标记用来存放定时器的返回值
+    return function(e) {
+        // 每当用户输入的时候把前一个 setTimeout clear 掉
+        clearTimeout(timeout);
+        // 然后又创建一个新的 setTimeout, 这样就能保证interval 间隔内如果时间持续触发，就不会执行 fn 函数
+        timeout = setTimeout(() => {
+            fn();
+        }, delay);
+    };
+}
+// 处理函数
+function handle() {
+    console.log('防抖：', arguments);
+    console.log('timeout：', this.timeout);
+}
+
+//滚动事件
+window.addEventListener('scroll', debounce(handle.bind(this,1,2), 500));
+</script>
+
+</html>

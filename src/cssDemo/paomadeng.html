@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>border light</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		.container{
+			height: 300px;
+		}
+		.border-box{
+			height: 200px;
+			width: 400px;
+			margin: 50px auto;
+			background-color: skyblue;
+			position: relative;
+		}
+		.border-box > div{
+			position: absolute;
+			overflow: hidden;
+			background-color: gray;
+		}
+		.border-box > div > span{
+			display: inline-block;
+			width: 5px;
+			height: 5px;
+			border-radius: 50%;
+			position: absolute;
+			background-color: rgba(0,0,128,1);
+		}
+		.border-box > div > span::after{
+			content: '';
+			display: inline-block;
+			position: absolute;
+		}
+		/*border-top*/
+		.border-box > .border-top{
+			height: 5px;
+			width: 100%;
+			top: 0;
+		}
+		.border-box > .border-top > span{
+			right: -5px;
+			animation: top-move 6s linear infinite;
+		}
+		.border-box > .border-top > span::after{
+			left: 3px;
+			width: 15px;
+			height: 5px;
+			background-image: linear-gradient(to right, rgba(0,0,128,1), rgba(128,128,128,0));
+		}
+		/*border-bottom*/
+		.border-box > .border-bottom{
+			height: 5px;
+			width: 100%;
+			bottom: 0;
+		}
+		.border-box > .border-bottom > span{
+			left: -5px;
+			animation: bottom-move 6s linear infinite;
+		}
+		.border-box > .border-bottom > span::after{
+			right: 3px;
+			width: 15px;
+			height: 5px;
+			background-image: linear-gradient(to left, rgba(0,0,128,1), rgba(128,128,128,0));
+		}
+		/*border-left*/
+		.border-box > .border-left{
+			width: 5px;
+			height: 100%;
+			left: 0;
+		}
+		.border-box > .border-left > span{
+			top: -5px;
+			animation: left-move 3s linear infinite;
+		}
+		.border-box > .border-left > span::after{
+			bottom: 3px;
+			width: 5px;
+			height: 15px;
+			background-image: linear-gradient(to top, rgba(0,0,128,1), rgba(128,128,128,0));
+		}
+		/*border-right*/
+		.border-box > .border-right{
+			width: 5px;
+			height: 100%;
+			right: 0;
+		}
+		.border-box > .border-right > span{
+			bottom: -5px;
+			animation: right-move 3s linear infinite;
+		}
+		.border-box > .border-right > span::after{
+			top: 3px;
+			width: 5px;
+			height: 15px;
+			background-image: linear-gradient(to bottom, rgba(0,0,128,1), rgba(128,128,128,0));
+		}
+
+		.border-box div span:nth-child(2){
+			animation-delay: 1s;
+		}
+		.border-box div span:nth-child(3){
+			animation-delay: 2s;
+		}
+		.border-box div span:nth-child(4){
+			animation-delay: 3s;
+		}
+		.border-box div span:nth-child(5){
+			animation-delay: 4s;
+		}
+		.border-box div span:nth-child(6){
+			animation-delay: 5s;
+		}
+		@keyframes top-move{
+			0%{
+				right: -5px;
+			}
+			100%{
+				right: 100%;
+			}
+		}
+		@keyframes bottom-move{
+			0%{
+				left: -5px;
+			}
+			100%{
+				left: 100%;
+			}
+		}
+		@keyframes left-move{
+			0%{
+				top: -5px;
+			}
+			100%{
+				top: 100%;
+			}
+		}
+		@keyframes right-move{
+			0%{
+				bottom: -5px;
+			}
+			100%{
+				bottom: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="border-box">
+			<div class="border-top">
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+			<div class="border-bottom">
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+			<div class="border-left">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+			<div class="border-right">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
+	</div>
+<script>
+</script>
+</body>
+</html>

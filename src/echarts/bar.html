@@ -144,6 +144,7 @@ var option2 = {
                 type: 'bar',
                 data: [5, 20, 36, 10, 10, 20],
                 color:function(params){
+                    console.log(params)
                 	return colors[params.dataIndex]
                 },
                 label:{
@@ -166,7 +167,8 @@ var option2 = {
                 x:'center'
                 
             },
-            tooltip: {},
+            // tooltip: {},
+            color: ['#ff0000'],
             legend:{
             	orient:'vertical',
             	right:0,
@@ -219,6 +221,8 @@ var option2 = {
                 x:'center'
                 
             },
+            color: ['#f00', '#00f'],
+
             legend:{
             	right:0,
             	bottom:0
@@ -245,6 +249,27 @@ var option2 = {
                 label:{
                 	show: true,
                 	formatter:'{c}'
+                }
+            },
+            // {
+            //     type: 'line',
+            //     smooth:true,
+            //     radius:['20%','50%'],
+            //     data: [5, 20, 36, 10, 30, 20],
+            //     label:{
+            //         show: true,
+            //         formatter:'{c}'
+            //     }
+            // },
+            {
+                name: '销量2',
+                type: 'line',
+                smooth:true,
+                radius:['20%','50%'],
+                data: [5, 10, 36, 10, 10, 20],
+                label:{
+                    show: true,
+                    formatter:'{c}'
                 }
             }
             ]

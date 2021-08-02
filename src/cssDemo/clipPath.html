@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body{
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(12, 12, 12);
+    }
+    h1{
+        position: absolute;
+        font-size: 5em;
+    }
+    .diyi{
+        -webkit-text-stroke:rgba(79, 79, 224,.7) 2px;
+        color: transparent;
+    }
+    .dier{
+        
+        color: rgba(29, 29, 236, 1);
+        animation: move 3s ease-in-out  infinite;
+    }
+    @keyframes move{
+        0%{
+            clip-path: polygon(0% 62%, 14% 55%, 24% 51%, 32% 51%, 41% 56%, 50% 59%, 60% 59%, 69% 55%, 76% 49%, 84% 48%, 93% 50%, 100% 54%, 100% 100%, 0 100%);
+        }
+        50%{
+            clip-path: polygon(0% 62%, 10% 62%, 23% 68%, 36% 68%, 44% 64%, 50% 59%, 59% 54%, 67% 55%, 74% 59%, 86% 62%, 94% 61%, 100% 54%, 100% 100%, 0 100%);
+        }
+       100%{
+            clip-path: polygon(0% 62%, 14% 55%, 24% 51%, 32% 51%, 41% 56%, 50% 59%, 60% 59%, 69% 55%, 76% 49%, 84% 48%, 93% 50%, 100% 54%, 100% 100%, 0 100%);
+        }
+    }
+</style>
+<body>
+    <h1 class="diyi">Ice~Land</h1>
+    <h1 class="dier">Ice~Land</h1>
+</body>
+</html>

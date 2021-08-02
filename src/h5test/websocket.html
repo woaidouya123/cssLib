@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>websocket测试</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<input type="text" placeholder="请输入websocket地址" id="address">
+	<button onclick="openIt()">开启</button> 
+	<button onclick="closeIt()">关闭</button> 
+	<div class="send">
+		<input type="text" placeholder="请输入发送内容" id="sendInput">
+		<button onclick="sendIt()">发送</button> 
+	</div>
+	<div class="receive" id="log">
+		输入地址后点击开启<br>
+		此处显示内容。。。<br>
+	</div>
+	<script type="text/javascript">
+		var websocket;
+		var log = function(text){
+			document.getElementById("log").innerHTML = document.getElementById("log").innerHTML + text + "<br>";
+		}
+		function openIt(){
+			console.log("开启")
+			var url = document.getElementById("address").value;
+			websocket = new WebSocket("ws://"+url);
+			websocket.onopne = function(socket){
+				log("websocket连接成功")
+			}
+			websocket.onmessage = function(msg){
+				log("接收："+msg.data);
+			}
+		}
+		function sendIt(){
+			console.log("发送")
+			var text = document.getElementById("sendInput").value;
+			websocket.send(text);
+			log("发送："+text);
+		}
+		function closeIt(){
+			console.log("关闭")
+			websocket && websocket.readyState === WebSocket.OPEN && websocket.close();
+			log("websocket已关闭")
+		}
+	</script>
+</body>
+</html>

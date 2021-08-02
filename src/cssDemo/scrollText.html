@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>旋转文字</title>
+    <meta charset="utf-8">
+    <style>
+    .container {
+        height: 300px;
+        overflow: hidden;
+        margin: 0 auto;
+        transition: all .3s linear;
+        text-align: center;
+        perspective: 500;
+        -webkit-perspective: 500;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container .label {
+        white-space: nowrap;
+        height: 100px;
+        display: inline-block;
+        line-height: 100px;
+        font-size: 20px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: all .3s linear;
+        transform: translateZ(50px) rotateY(0deg);
+        transform-origin: 50% 50% -300px;
+        animation: rotate 5s linear infinite;
+    }
+
+    .container .label .scroll-text {
+        background-color: green;
+        height: 100%;
+        display: inline-block;
+    }
+
+    .container .label .scroll-bg {
+        background-color: green;
+        transform: translateZ(-1px);
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: translateZ(50px) rotateY(0deg);
+        }
+
+        100% {
+            transform: translateZ(50px) rotateY(360deg);
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="label">
+            <span class="scroll-text">这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文字！</span>
+            <div class="scroll-bg"></div>
+        </div>
+    </div>
+</body>
+
+</html>

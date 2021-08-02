@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>traceLine</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="main" style="height: 375px "></div>
+    <script src="./echarts-4.7.js"></script>
+    <script>
+        // Hermite三次插值
+        var hermite = function () {
+
+            var scope = { "u": 0.5 };
+
+            // 根据x值返回y值
+            var hermite = function (x) {
+
+                if (scope.MR) {
+                    var sx = (x - scope.a) / (scope.b - scope.a),
+                        sx2 = sx * sx,
+                        sx3 = sx * sx2;
+                    var sResult = sx3 * scope.MR[0] + sx2 * scope.MR[1] + sx * scope.MR[2] + scope.MR[3];
+                    return sResult * (scope.b - scope.a);
+                } else {
+                    throw new Error('You shoud first set the position!');
+                }
+
+            };
+
+            // 设置张弛系数【应该在点的位置设置前设置】
+            hermite.setU = function (t) {
+
+                if (typeof t === 'number') {
+                    scope.u = (1 - t) * 0.5;
+                } else {
+                    throw new Error('Expecting a figure!');
+                }
+                return hermite;
+
+            };
+
+            // 设置点的位置
+            hermite.setP = function (x1, y1, x2, y2, s1, s2) {
+
+                if (x1 < x2) {
+                    // 记录原始尺寸
+                    scope.a = x1; scope.b = x2;
+                    var p3 = scope.u * s1,
+                        p4 = scope.u * s2;
+                    // 缩放到[0,1]定义域
+                    y1 /= (x2 - x1);
+                    y2 /= (x2 - x1);
+                    // MR是提前计算好的多项式通解矩阵
+                    // 为了加速计算
+                    // 如上面说的
+                    // 统一在[0,1]上计算后再通过缩放和移动恢复
+                    // 避免了动态求解矩阵的麻烦
+                    scope.MR = [
+                        2 * y1 - 2 * y2 + p3 + p4,
+                        3 * y2 - 3 * y1 - 2 * p3 - p4,
+                        p3,
+                        y1
+                    ];
+                } else {
+                    throw new Error('The point position should be increamented!');
+                }
+                return hermite;
+
+            };
+
+            return hermite;
+        };
+        // 曲线
+        var _line = function () {
+
+            var scope = {
+                d: 5
+            },Hermite = hermite().setU(-1);
+
+            /**
+             * 绘制曲线
+             */
+            var line = function (points) {
+                var i = 0, res = [];
+                var l, r, bx;
+                for (; i < points.length - 1; i++) {
+                    l = i == 0 ? 0 : i - 1;
+                    r = i == points.length - 2 ? points.length - 1 : i + 2;
+                    Hermite.setP(
+                        points[i][0], points[i][1],
+                        points[i + 1][0], points[i + 1][1],
+                        (points[i + 1][1] - points[l][1]) / (points[i + 1][0] - points[l][0]),
+                        (points[r][1] - points[i][1]) / (points[r][0] - points[i][0])
+                    );
+                    for (bx = points[i][0]; bx < points[i + 1][0]; bx += scope.d){
+                        res.push([bx, Hermite(bx)])
+                    }
+                }
+                res.push([points[points.length-1][0], points[points.length-1][1]])
+                return res;
+            };
+
+            // 设置精度
+            line.setPrecision = function (dis) {
+                scope.d = dis;
+                return line;
+            };
+
+            // 设置张弛系数
+            line.setU = function (u) {
+                Hermite.setU(u);
+                return line;
+            };
+
+            return line;
+
+        };
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+    var option;
+    var preData = new Array(10).fill(0).map((v,i)=>{
+        return [i*11,Math.ceil(Math.random()*100)]
+    });
+    var data = new _line().setPrecision(1)(preData)
+    var preData2 = new Array(10).fill(0).map((v,i)=>{
+        return [i*11,Math.ceil(Math.random()*100)]
+    });
+    var data2 = new _line().setPrecision(1)(preData2)
+    option = {
+        xAxis: 
+        [
+            {
+                type: 'value',
+                id: 'x1',
+            },
+            {
+                type: 'value',
+                id: 'x2',
+                show:false
+            }
+        ],
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                zlevel: 1,
+                data: data,
+                type: 'line',
+                smooth: true,
+                showSymbol: false,
+                xAxisIndex: 1
+            },
+            {
+                zlevel: 1,
+                data: data2,
+                type: 'line',
+                smooth: true,
+                showSymbol: false,
+                xAxisIndex: 1
+            },
+            {
+                zlevel: 1,
+                data: preData,
+                type: 'line',
+                lineStyle:{
+                    width:0
+                }
+                
+            },
+            {
+                zlevel: 1,
+                data: preData2,
+                type: 'line',
+                lineStyle:{
+                    width:0
+                }
+                
+            },
+            {
+                type:'lines',
+                zlevel: 2,
+                coordinateSystem:'cartesian2d',
+                polyline:true,
+                xAxisIndex: 1,
+                effect: {
+                    show: true,
+                    period: 7,
+                    trailLength: 0.1,
+                    color: '#000',
+                    symbolSize: 5
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#00ff00',
+                        width: 0,
+                        curveness: 0.5
+                    }
+                },
+                data:[{
+                    name:"111",
+                    coords:data2
+                }]
+                    
+            },
+            {
+                type:'lines',
+                zlevel: 2,
+                coordinateSystem:'cartesian2d',
+                polyline:true,
+                effect: {
+                    show: true,
+                    period: 7,
+                    trailLength: 0.1,
+                    color: '#000',
+                    symbolSize: 5,
+                    // delay:1000
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#00ff00',
+                        width: 0,
+                        curveness: 0.5
+                    }
+                },
+                data:[{
+                    name:"111",
+                    coords:data
+                }]
+                    
+            }
+        ]
+    };
+
+    option && myChart.setOption(option);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>地图</title>
+  <meta charset="utf-8">
+  <style>
+  #map {
+    width: 1000px;
+    height: 800px;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="map"></div>
+    <div id="tip">
+    </div>
+  </div>
+  <script src="./echarts.js"></script>
+  <script src="./suzhou.js"></script>
+  <script>
+  echarts.registerMap('suzhou', geoJson, {});
+  let option = {
+    geo: {
+      map: 'suzhou',
+      aspectScale: 0.85, //地图长度比
+      // roam: true,
+    },
+    series: [{
+      name: '无锡',
+      type: 'map',
+      // roam: true,
+      mapType: 'suzhou',
+      aspectScale: 0.85, //地图长度比
+      label: {
+        normal: {
+          show: true,
+        },
+        emphasis: {
+          show: false,
+        }
+      },
+      itemStyle: {
+        normal: {
+          // borderColor: '#58d9fc',
+          borderWidth: 2,
+          // areaColor: {
+          //   type: 'radial',
+          //   x: 0.5,
+          //   y: 0.5,
+          //   r: 0.8,
+          //   colorStops: [{
+          //     offset: 0,
+          //     color: '#102d70' // 0% 处的颜色
+          //   }, {
+          //     offset: 1,
+          //     color: '#104d92' // 100% 处的颜色
+          //   }],
+          //   globalCoord: false // 缺省为 false
+          // }
+        }
+      },
+    }]
+  }
+  let myChart = echarts.init(document.getElementById("map"));
+  myChart.setOption(option)
+  </script>
+</body>
+
+</html>

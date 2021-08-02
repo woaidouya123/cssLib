@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>字体渐变动画</title>
+  <meta charset="utf-8">
+  <style type="text/css">
+  .content {
+    font-size: 24px;
+    font-weight: bold;
+    width: fit-content;
+    position: relative;
+    color: #ccc;
+  }
+
+  .content:before {
+    content: attr(content);
+    display: block;
+    background: linear-gradient(to right, #ABDCFF, #0396FF);;
+    -webkit-background-clip: text;
+    color: transparent;
+    position: absolute;
+    white-space: nowrap;
+    animation: colorChange 5s infinite;
+  }
+  @keyframes colorChange {
+    0%{
+      width: 0%;
+    }
+    100%{
+      width: 100%;
+    }
+  }
+  </style>
+</head>
+
+<body>
+  <div class="content" content="这是一行渐变色的字体。">这是一行渐变色的字体。</div>
+</body>
+
+</html>

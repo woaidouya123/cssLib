@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iframe子页面</title>
+</head>
+<body>
+    <h2>我是内嵌的子页面</h2>
+    <button id='btn'>子页面的按钮</button>
+    <script>
+         document.getElementById('btn').onclick= function(){
+            window.parent.postMessage({
+                msg:"hideselfService"
+            },'*');
+        }
+        window.addEventListener('message',function(e){
+            console.log(e.data);
+        });
+        // var string = "aaa";
+        window.localStorage.setItem("sfsfsafd",string)
+        console.log(window.localStorage)
+    </script>
+</body>
+</html>

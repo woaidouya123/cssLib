@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>浏览器桌面消息</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <script>
+		(function(window) {
+		    var index = 0;
+		    var permission = "default";
+		    var sjNotify = function(title, content, icon) {
+		        var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+		        if (!Notification) {
+		            alert("您的浏览器不支持此特性");
+		            return false;
+		        }
+		        if (Notification && permission === "default" && index === 0) {
+		            //支持,但是未开启桌面提醒，进行相关操作、或提示开启
+		            window.Notification.requestPermission(function(status) {
+		                permission = status;
+		                index++;
+		            });
+		        } 
+		        else{
+		            var options = {
+		                body: content,
+		                icon: icon || "./static/sj/img/notify.ico"
+		            };
+		            if (permission === "granted") {
+		                //支持并且开启桌面消息提醒
+		                var instance = new Notification(title, options);
+		                instance.onclick = function() {
+		                    instance.close();
+		                };
+		                instance.onerror = function() {};
+		                instance.onshow = function() {
+		                    setTimeout(function() {
+		                        instance.close();
+		                    }, 3000)
+		                    console.log(instance.body)
+		                };
+		                instance.onclose = function() {
+		                };
+		            } 
+		            else if (permission == "denied"){
+		                //支持但是未开启
+		                return false;
+		            } 
+		            else{
+		                //用户已经忽略选择
+		                return false;
+		            }
+		        }
+		    }
+		    window.sjNotify = sjNotify;
+		})(this);
+		sjNotify("test","test_content")
+    </script>
+</body>
+
+</html>

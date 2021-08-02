@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>transGame</title>
+    <meta charset="utf-8">
+    <script src="./clay.js"></script>
+    <style>
+    .container {
+        width: 500px;
+        height: 500px;
+        margin: 100px auto;
+        font-size: 0px;
+    }
+
+    .box {
+        width: 250px;
+        height: 250px;
+        padding: 50px;
+        box-sizing: border-box;
+        background-color: rgba(128, 0, 0, 0.3);
+        display: inline-block;
+        background-clip: content-box;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <script>
+    function UnitBezier(p1x, p1y, p2x, p2y) {
+        this.cx = 3.0 * p1x;
+        this.bx = 3.0 * (p2x - p1x) - this.cx;
+        this.ax = 1.0 - this.cx - this.bx;
+        this.cy = 3.0 * p1y;
+        this.by = 3.0 * (p2y - p1y) - this.cy;
+        this.ay = 1.0 - this.cy - this.by;
+    }
+    UnitBezier.prototype = {
+        sampleCurveX: function(t) { //贝赛尔曲线t时刻的坐标点的X坐标
+            return ((this.ax * t + this.bx) * t + this.cx) * t;
+        },
+        sampleCurveY: function(t) { //贝赛尔曲线t时刻的坐标点的y坐标
+            return ((this.ay * t + this.by) * t + this.cy) * t;
+        }
+    }
+    window.onload = function() {
+
+    }
+    </script>
+</body>
+
+</html>

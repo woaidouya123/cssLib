@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>半圆带标志环</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="chart" style="height: 375px "></div>
+    <script src="./echarts-4.7.js"></script>
+    <script>
+    function initData(cur, total) {
+        let option = {
+            title: {
+                text: cur,
+                textStyle: {
+                    color: '#01c4a3',
+                    fontSize: 40
+                },
+                left: 'center',
+                top: 'bottom'
+            },
+            angleAxis: {
+                max: 100, // 满分
+                startAngle: 180,
+                clockwise: true, // 逆时针
+                // 隐藏刻度线
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            },
+            radiusAxis: {
+                type: 'category',
+                // 隐藏刻度线
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            },
+            polar: {
+                center: ['50%', '90%'],
+                radius: '150%' //图形大小
+            },
+            series: [{
+                type: 'bar',
+                data: [{
+                    value: total,
+                    itemStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [{
+                                offset: 1,
+                                color: '#3bbc7f'
+                            }, {
+                                offset: 0.5,
+                                color: '#fcf443'
+                            }, {
+                                offset: 0,
+                                color: '#ff743a'
+                            }])
+                        }
+                    },
+                }],
+                coordinateSystem: 'polar',
+                roundCap: true,
+                barWidth: 25,
+                // barGap: '-100%', // 两环重叠
+                z: 1,
+            }, { // 灰色环
+                type: 'bar',
+                stack: 'total',
+                data: [
+                    {
+                        value: cur,
+                        itemStyle: {
+                            color: 'transparent',
+                            shadowColor: 'rgba(0, 0, 0, 0.2)',
+                            shadowBlur: 5,
+                            shadowOffsetY: 2
+                        }
+                    },
+                ],
+                coordinateSystem: 'polar',
+                roundCap: true,
+                barWidth: 25,
+                barGap: '-100%', // 两环重叠
+                z: 2,
+            }, { 
+                type: 'bar',
+                stack: 'total',
+                data: [
+                    {
+                        value: total - cur,
+                        itemStyle: {
+                            color: '#042c73',
+                            shadowColor: 'rgba(0, 0, 0, 0.2)',
+                            shadowBlur: 5,
+                            shadowOffsetY: 2
+                        }
+                    },
+                ],
+                coordinateSystem: 'polar',
+                roundCap: true,
+                barWidth: 25,
+                barGap: '-100%', // 两环重叠
+                z: 2
+            }, { // label
+                type: 'custom',
+                coordinateSystem: 'polar',
+                data: [
+                    [cur]
+                ],
+                coordinateSystem: 'polar',
+                renderItem: function(params, api) {
+                    let pos = api.coord([0, cur]);
+                    return {
+                        type: 'circle',
+                        shape: {
+                            cx: pos[0],
+                            cy: pos[1],
+                            r: 25,
+                        },
+                        style: api.style({fill: colors[100-Math.round(cur/total*100)]})
+                    }
+                },
+                itemStyle: {
+                    shadowColor: colors[100-Math.ceil(cur/total*100)],
+                    shadowBlur: 20
+                },
+                z: 3
+            }]
+        }
+        let myChart = echarts.init(document.getElementById("chart"));
+        myChart.setOption(option)
+    }
+    function parseColor(hexStr) {
+      return hexStr.length === 4
+        ? hexStr
+            .substr(1)
+            .split('')
+            .map(function(s) {
+              return 0x11 * parseInt(s, 16);
+            })
+        : [hexStr.substr(1, 2), hexStr.substr(3, 2), hexStr.substr(5, 2)].map(function(s) {
+            return parseInt(s, 16);
+          });
+    }
+    function pad(s) {
+      return s.length === 1 ? '0' + s : s;
+    }
+
+    function gradientColors(start, end, steps, gamma) {
+      var i,
+        j,
+        ms,
+        me,
+        output = [],
+        so = [];
+      gamma = gamma || 1;
+      var normalize = function(channel) {
+        return Math.pow(channel / 255, gamma);
+      };
+      start = this.parseColor(start).map(normalize);
+      end = this.parseColor(end).map(normalize);
+      for (i = 0; i < steps; i++) {
+        ms = i / (steps - 1);
+        me = 1 - ms;
+        for (j = 0; j < 3; j++) {
+          so[j] = this.pad(Math.round(Math.pow(start[j] * me + end[j] * ms, 1 / gamma) * 255).toString(16));
+        }
+        output.push('#' + so.join(''));
+      }
+      return output;
+    }
+    let colors = [...gradientColors('#ff743a', '#fcf443', 50), ...gradientColors('#fcf443', '#3bbc7f', 50)]
+    initData(35, 50);
+    </script>
+</body>
+
+</html>

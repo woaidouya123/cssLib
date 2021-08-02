@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<head>
+    <title>dragDemo</title>
+    <meta charset="utf-8">
+    <style>
+    .op {
+        position: absolute;
+        top: 20px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 800px;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .op span {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        cursor: grab;
+    }
+
+    .blue {
+        background-color: blue;
+    }
+
+    .red {
+        background-color: red;
+    }
+
+    .green {
+        background-color: green;
+    }
+    </style>
+</head>
+
+<body>
+    <div>
+        <canvas id="canvas" width="800" height="500">对不起，你的浏览器不支持canvas</canvas>
+        <div class="op">
+            <span class="blue" draggable="true"></span>
+            <span class="red" draggable="true"></span>
+            <span class="green" draggable="true"></span>
+        </div>
+        <canvas id="dragImg" width="20" height="20"></canvas>
+    </div>
+    <script>
+    window.onload = function() {
+
+        const canvas = document.getElementById("canvas"),
+            ctx = canvas.getContext("2d"),
+            canvas_drag = document.getElementById("dragImg"),
+            ctx_drag = canvas_drag.getContext("2d");
+        [...document.getElementsByTagName("span")].forEach(node => {
+            node.addEventListener("dragstart", function(event) {
+                let color = event.target.className;
+                drawMethod[color](ctx_drag, 10, 10);
+                event.dataTransfer.setDragImage(canvas_drag, 10, 10);
+                event.dataTransfer.setData("color", color)
+                console.log(event.dataTransfer);
+            })
+            node.addEventListener("dragover", function(event) {
+                event.preventDefault();
+            })
+        })
+        canvas.addEventListener("drop", function(event) {
+            event.preventDefault();
+            let color = event.dataTransfer.getData("color"),
+                target = event.target || event.srcElement;
+            console.log(target.offsetX, target.offsetY);
+            console.log(event.dataTransfer.getData("color"), event)
+            drawMethod[color](ctx, event.clientX - target.offsetLeft, event.clientY - target.offsetTop);
+        }, false);
+        canvas.addEventListener("dragover", function(event) {
+            event.preventDefault();
+        })
+
+        const drawMethod = {
+            'blue': (ctx, x, y) => {
+                console.log(x, y)
+                ctx.fillStyle = "blue";
+                ctx.fillRect(x - 10, y - 10, 20, 20);
+            },
+            'red': (ctx, x, y) => {
+                console.log(x, y)
+                ctx.fillStyle = "red";
+                ctx.fillRect(x - 10, y - 10, 20, 20);
+            },
+            'green': (ctx, x, y) => {
+                console.log(x, y)
+                ctx.fillStyle = "green";
+                ctx.fillRect(x - 10, y - 10, 20, 20);
+            }
+        }
+
+    }
+
+    function DragCanvas(){
+    	this.canvas = null;
+    	this.ctx = null;
+    	this.height = 0;
+    	this.width = 0;
+    	this.save_canvas = null;
+    	this.save_ctx = null;
+    	this.save_map = null;
+    	this.key_gen = null;
+    }
+
+    DragCanvas.prototype.setCanvas = function(canvas){
+    	this.canvas = canvas;
+    	this.ctx = this.canvas.getContext("2d");
+    	this.height = this.canvas.height;
+    	this.width = this.canvas.width;
+    	this.save_canvas = document.createElement("canvas");
+    	this.save_ctx = this.save_canvas.getContext("2d");
+    	this.save_canvas.height = this.height;
+    	this.save_canvas.width = this.width;
+    	this.key_gen = 
+    }
+
+    DragCanvas.prototype.drawRectangle = function(posX, posY, width, height, color){
+    	if(!this.canvas){
+    		throw Error("please set canvas first!");
+    	}
+    	this.ctx.fillStyle = color;
+    	this.ctx.fillRect(posX, posY, width, height);
+    }
+    </script>
+</body>
+
+</html>

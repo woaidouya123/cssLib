@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>copy||cut||paste</title>
+	<meta charset="utf-8">
+	<style>
+		.text-div{
+
+		}
+		.op-panel{
+
+		}
+		.text-div p,.text-div textarea{
+
+		}
+	</style>
+</head>
+<body>
+<div class="text-div">
+	<div class="op-panel">
+		<button onclick="copyAll(event)">复制</button>
+	</div>
+	<p>
+		这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文字。
+	</p>
+</div>
+<script>
+	function copyAll(event){
+		var ev = event || window.event;
+		var target = ev.target || ev.srcElement;
+		target.parentNode.nextElementSibling.select();
+		document.execCommand("Copy")
+		this.innerText = 复制成功;
+		var st = setTimeout(function(){
+			this.innerText = 复制;
+			clearTimeout(st);
+		},3000)
+	}
+</script>
+
+</body>
+</html>

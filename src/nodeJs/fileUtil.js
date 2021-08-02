@@ -11,8 +11,26 @@ app.use('/static', express.static('static'));
 app.use('/images', express.static('../images'));
 app.use('/markdown', express.static('../markdown'));
 app.use('/cssdemo', express.static('../cssDemo'));
+app.use('/iframe', express.static('../iframe'));
+app.use('/mobile', express.static('../mobile'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ dest: './tmp/'}).array('file'));
+app.use('/video', express.static('../images/video.mp4'));
+
+app.get('/test', function (req, res) {
+  console.log(3);
+   var st = setTimeout(()=>{
+     res.end()
+   },90000)
+   
+})
+
+app.get('/test.do', function (req, res) {
+   res.header('Access-Control-Allow-Origin', '*');
+   console.log(1);
+   res.end();
+   
+})
  
 app.get('/index.html', function (req, res) {
    res.sendFile( __dirname + "/" + "index.html" );
@@ -60,7 +78,7 @@ app.post('/file_save', function (req, res) {
    });
 })
  
-var server = app.listen(8081, function () {
+var server = app.listen(8088, function () {
  
   var host = server.address().address
   var port = server.address().port

@@ -59,12 +59,12 @@
 
     }
     // 获取房间号
-    sendAjax("/getRoomId", { id: 757349 }, function(res) {
-        _room_id = res.data.room_id;
-        _uid = res.data.uid;
+    sendAjax("/getRoomId", { id: 708397 }, function(res) {
+        _room_id = res.data.room_id || "708397";
+        _uid = res.data.uid || "52596358";
         // 获取Host、Token
         sendAjax("/getHostToken", { id: _room_id }, function(res) {
-            _host = res.data.host_server_list;
+            _host = res.data.host_list;
             _token = res.data.token;
             console.log(_host, _token);
             createWebSocket(_host[0].host, _uid, _room_id, _token)

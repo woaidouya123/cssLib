@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iframe父级页面</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        iframe {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+
+</head>
+<body>
+    <h2>我是父级页面</h2>
+    <button id='btn'>父页面的按钮</button>
+     <div id="default">div内容</div>
+    <iframe src="./children.html" frameborder="0" name='myframe' id='myframe'></iframe>
+    <script language="javascript" type="text/javascript">
+         window.addEventListener('message',function(e){
+            console.log(e.data);
+            if(e.data.msg==='hideselfService'){
+                document.getElementById('default').style.display = 'none';
+            }
+        });
+         document.getElementById('btn').onclick= function(){
+             var myframe = document.getElementById('myframe');
+            myframe.contentWindow.postMessage({data:'parent'},'http://localhost:8081');
+         }
+         var $setItem = window.localStorage.__proto__.setItem;
+         window.localStorage.__proto__.setItem = function(key, value){
+            console.log("localStorage changed", key, value)
+            $setItem.apply(this, arguments);
+         }
+         window.addEventListener("setItemEvent",function(event){
+            console.log(event)
+         })
+    </script>
+</body>
+</html>

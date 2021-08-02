@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>dragToCanvas(div+absolate)</title>
+	<meta charset="utf-8">
+	<style>
+	body{
+		margin: 0;
+		padding: 0;
+	}
+	#container{
+		width: fit-content;
+		height: fit-content;
+		/*position: relative;*/
+	}
+    .op {
+        position: absolute;
+        top: 20px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 800px;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    #container span {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        cursor: grab;
+    }
+
+    .blue {
+        background-color: blue;
+    }
+
+    .red {
+        background-color: red;
+    }
+
+    .green {
+        background-color: green;
+    }
+    </style>
+</head>
+<body>
+	<div id="container">
+        <canvas id="canvas" width="800" height="500">对不起，你的浏览器不支持canvas</canvas>
+        <div class="op">
+            <span class="blue" draggable="true"></span>
+            <span class="red" draggable="true"></span>
+            <span class="green" draggable="true"></span>
+        </div>
+    </div>
+    <script>
+    	const canvas = document.getElementById("canvas"),
+            ctx = canvas.getContext("2d");
+         function* getNumber(){
+        	let count = 1;
+        	while(count<100){
+        		yield count++;
+        	}
+        };
+        let lines_h = [], lines_v = [],
+        hw = getNumber(), DRAGLINEUPDATE = true;
+        [...document.getElementsByTagName("span")].forEach(node => {
+            node.addEventListener("dragstart", function(event) {
+            	var target = event.target || event.srcElement, bound = target.getBoundingClientRect();
+            	console.log(bound,event.clientX - bound.left,event.clientY - bound.top)
+                event.dataTransfer.setData("class", target.className);
+                event.dataTransfer.setData("mode", "copy");
+                event.dataTransfer.setData("left", event.clientX - bound.left);
+                event.dataTransfer.setData("top", event.clientY - bound.top);
+                event.dataTransfer.setData("width", bound.width);
+                event.dataTransfer.setData("height", bound.height);
+            })
+            node.addEventListener("dragover", function(event) {
+                event.preventDefault();
+            })
+
+        })
+        canvas.addEventListener("drop", function(event) {
+            event.preventDefault();
+            var target = event.target || event.srcElement,
+            	op_type = event.dataTransfer.getData("mode"),
+            	node = op_type === "copy" ? 
+            	document.createElement("span"): 
+            	document.getElementById(event.dataTransfer.getData("id")),
+            	classname = event.dataTransfer.getData("class"),
+            	top = event.clientY - event.dataTransfer.getData("top"),
+            	left = event.clientX - event.dataTransfer.getData("left");
+            node.style.top = top + "px";
+            node.style.left = left + "px";
+            lines_h.push(left);
+            lines_h.push(left+parseInt(event.dataTransfer.getData("width")));
+            lines_v.push(top);
+            lines_v.push(top+parseInt(event.dataTransfer.getData("height")));
+            ctx.clearRect(0,0,800,500);
+            if(op_type === "copy"){
+            	node.id = hw.next().value;
+            	node.className = classname?classname:node.className;
+            	node.setAttribute("draggable", true);
+            	node.style.position = "absolute";
+            	node.addEventListener("dragstart", function(event){
+	            	var target = event.target || event.srcElement, bound = target.getBoundingClientRect();
+	            	console.log(bound,event.clientX - bound.left,event.clientY - bound.top)
+	                event.dataTransfer.setData("id", target.id);
+	                event.dataTransfer.setData("mode", "move");
+	                event.dataTransfer.setData("left", event.clientX - bound.left);
+	                event.dataTransfer.setData("top", event.clientY - bound.top);
+	                event.dataTransfer.setData("width", bound.width);
+                	event.dataTransfer.setData("height", bound.height);
+	            })
+	            target.parentNode.appendChild(node);
+            }
+        }, true);
+
+        canvas.addEventListener("dragover", function(event) {
+        	if(DRAGLINEUPDATE){
+        		ctx.clearRect(0,0,800,500);
+	        	new Set(lines_h).forEach(item=>{
+	        		ctx.moveTo(item, 0);
+					ctx.lineTo(item,500);
+					ctx.stroke();
+	        	})
+	        	new Set(lines_v).forEach(item=>{
+	        		ctx.moveTo(0, item);
+					ctx.lineTo(800,item);
+					ctx.stroke();
+	        	})
+	        	DRAGLINEUPDATE = !DRAGLINEUPDATE;
+	        	let st = setTimeout(()=>{
+	        		DRAGLINEUPDATE = !DRAGLINEUPDATE;
+	        		clearTimeout(st);
+	        	},1000)
+        	}
+        	
+            event.preventDefault();
+        })
+
+    </script>
+
+</body>
+</html>

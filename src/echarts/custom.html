@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>custom</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="chart" style="height: 375px "></div>
+    <script src="./echarts-4.7.js"></script>
+    <script>
+    var data = [
+        ['2018', 1],
+        ['2019', 1],
+        ['2020', 0],
+        ['2021', 1],
+        ['2022', 0],
+        ['2023', 0],
+    ];
+
+    function renderItem(params, api) {
+        console.log(params, api.value());
+        var dataIndex = params.dataIndex;
+        var yValue = api.value(1);
+        var start = api.coord([dataIndex, yValue]);
+        var end = api.coord([dataIndex + 1, yValue]);
+        return {
+            type: 'group',
+            children: [{
+                type: 'line',
+                shape: {
+                    x1: start[0],
+                    y1: start[1],
+                    x2: end[0],
+                    y2: end[1],
+                },
+                style: api.style({ stroke: 'black' })
+            }]
+        };
+    }
+
+    option = {
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            axisTick: {
+                show: false,
+            },
+            splitLine: {
+                show: false,
+            },
+            axisLabel: {
+                formatter: (v, i) => {
+                    return i >= data.length ? '' : data[i][0];
+                }
+            },
+        },
+        yAxis: {
+            type: 'category',
+            axisTick: {
+                show: false,
+            },
+            splitLine: {
+                show: false,
+            },
+        },
+        series: [{
+            type: 'custom',
+            renderItem: renderItem,
+            data: data
+        }]
+    };
+    let myChart = echarts.init(document.getElementById("chart"));
+    myChart.setOption(option)
+    </script>
+</body>
+
+</html>

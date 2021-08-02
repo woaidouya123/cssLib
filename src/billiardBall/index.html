@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>billiard</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<canvas id="canvas" width="1000" height="800"></canvas>
+	<script type="text/javascript">
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext("2d");
+		var center = [50, 300];
+		function move() {
+			center[0]++;
+		}
+		function draw() {
+			ctx.clearRect(0, 0, 1000, 800);
+			ctx.fillStyle = "#0f0";
+			ctx.beginPath();
+			ctx.arc(center[0], center[1], 20, 0, Math.PI*2);
+			ctx.closePath();
+			ctx.fill();
+		}
+		function loop() {
+			draw();
+			move();
+			requestAnimationFrame(loop)
+		}
+		loop();
+	</script>
+</body>
+</html>

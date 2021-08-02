@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>transCube</title>
+	<meta charset="utf-8">
+	<style>
+		@keyframes rotate{
+			0%{
+				transform: rotateX(0deg) rotateY(0deg);
+			} 
+			10%{
+				transform: rotateX(-45deg) rotateY(45deg) scale3d(.5, .5, .5);
+			}
+			15%{
+				transform: rotateX(-45deg) rotateY(90deg) scale3d(.5, .5, .5);
+			}
+			25%{
+				transform: rotateX(0deg) rotateY(90deg) ;
+			}
+			35%{
+				transform: rotateX(-45deg) rotateY(135deg) scale3d(.5, .5, .5);
+			}
+			40%{
+				transform: rotateX(-45deg) rotateY(180deg) scale3d(.5, .5, .5);
+			}
+			50%{
+				transform: rotateX(0deg) rotateY(180deg);
+			}
+			60%{
+				transform: rotateX(-45deg) rotateY(225deg) scale3d(.5, .5, .5);
+			}
+			65%{
+				transform: rotateX(-45deg) rotateY(270deg) scale3d(.5, .5, .5);
+			}
+			75%{
+				transform: rotateX(0deg) rotateY(270deg);
+			}
+			85%{
+				transform: rotateX(-45deg) rotateY(315deg) scale3d(.5, .5, .5);
+			}
+			90%{
+				transform: rotateX(-45deg) rotateY(360deg) scale3d(.5, .5, .5);
+			}
+			100%{
+				transform: rotateX(0deg) rotateY(360deg);
+			}
+		}
+		@keyframes rotate1 {
+			0%{
+				transform: rotateX(0deg) rotateY(0deg);
+			} 
+			50%{
+				transform: rotateX(-45deg) rotateY(45deg) scale3d(.5, .5, .5);
+			}
+			100%{
+				transform: rotateX(0deg) rotateY(90deg) ;
+			}
+		}
+		@keyframes rotate2 {
+			0%{
+				transform: rotateX(0deg) rotateY(90deg);
+			} 
+			50%{
+				transform: rotateX(-45deg) rotateY(135deg) scale3d(.5, .5, .5);
+			}
+			100%{
+				transform: rotateX(0deg) rotateY(180deg) ;
+			}
+		}
+		@keyframes rotate3 {
+			0%{
+				transform: rotateX(0deg) rotateY(180deg);
+			} 
+			50%{
+				transform: rotateX(-45deg) rotateY(225deg) scale3d(.5, .5, .5);
+			}
+			100%{
+				transform: rotateX(0deg) rotateY(270deg) ;
+			}
+		}
+		@keyframes rotate4 {
+			0%{
+				transform: rotateX(0deg) rotateY(270deg);
+			} 
+			50%{
+				transform: rotateX(-45deg) rotateY(315deg) scale3d(.5, .5, .5);
+			}
+			100%{
+				transform: rotateX(0deg) rotateY(360deg) ;
+			}
+		}
+		.container{
+			height: 500px;
+			padding: 100px 0;
+		}
+		.cube{
+			margin: 50px auto;
+			width: 300px;
+			height: 300px;
+			transform-style: preserve-3d;
+			position: relative;
+			transition: transform 3s;
+			/*animation: rotate1 10s linear infinite;*/
+		}
+		.cube div{
+			width: 300px;
+			height: 300px;
+			position: absolute;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: black;
+			transition: transform 1s;
+		}
+		.cube .front{
+			transform: translateZ(150px);
+			background-color: yellow;
+		}
+		.cube .back{
+			transform: rotateY(180deg) translateZ(150px);
+			background-color: skyblue;
+		}
+		.cube .left{
+			transform: rotateY(-90deg) translateZ(150px);
+			background-color: red;
+		}
+		.cube .right{
+			transform: rotateY(90deg) translateZ(150px);
+			background-color: blue;
+		}
+		.cube .top{
+			transform: rotateX(90deg) translateZ(150px);
+			background-color: gray;
+		}
+		.cube .bottom{
+			transform: rotateX(-90deg) translateZ(150px);
+			background-color: gray;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="cube" id="cube">
+		<div class="front">front</div>
+		<div class="back">back</div>
+		<div class="left">left</div>
+		<div class="right">right</div>
+		<div class="top">top</div>
+		<div class="bottom">bottom</div>
+	</div>
+</div>
+<script type="text/javascript">
+	window.onload = function(){
+		let angle = 0, cube = document.getElementById("cube");
+		let sI = setInterval(async () => {
+			angle += 45;
+			cube.style.transform = "rotateX(-45deg) rotateY("+ angle + "deg) scale3d(.5, .5, .5)";
+			console.log(angle, cube.style.transform)
+			await new Promise((reslove) => setTimeout(reslove, 3 * 1000));
+			angle += 45;
+			cube.style.transform = "rotateX(0deg) rotateY("+ angle + "deg)";
+			console.log(angle, cube.style.transform)
+		}, 6 * 1000) 
+	}
+</script>
+</body>
+</html>

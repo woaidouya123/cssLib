@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>带有markPoint折线图</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="chart" style="height: 375px "></div>
+    <script src="./echarts-4.7.js"></script>
+    <script>
+    const data = new Array(20).fill(false).map((v,i)=>{
+    	return {
+    		timestamp:'2020-10-'+(i+1),
+    		value:Math.ceil(Math.random()*100)
+    	}
+    });
+    function initData() {
+        let option = {
+          xAxis: {
+            type: "category",
+            data: data.map(v => v.timestamp)
+          },
+          yAxis: {
+            axisLine: {
+                show: false,
+            },
+            axisTick: {
+                show: false,
+            }
+          },
+          series: [{
+            data: data.map(v => v.value),
+            type: "line",
+            label: {
+                show: true,
+                formatter: '{c}',
+                position: 'right',
+            },
+            markPoint: {
+              data: [{
+                type: 'max',
+              }],
+              symbol: 'path://M469.333 128l85.333 0 0 512-85.333 0 0-512zM725.333 640l-426.667 0 213.333 256z',
+              symbolSize: [10, 30],
+              symbolOffset: [0, -20],
+              label: {
+                formatter: "hello",
+                offset: [0, -30]
+              },
+              itemStyle: {
+                color: '#000000'
+              }
+            }
+          }]
+        }
+        let myChart = echarts.init(document.getElementById("chart"));
+        myChart.setOption(option)
+    }
+    initData();
+    </script>
+</body>
+
+</html>

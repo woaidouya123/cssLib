@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>地图</title>
+  <meta charset="utf-8">
+  <style>
+  #map {
+    width: 1000px;
+    height: 800px;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="map"></div>
+    <div id="tip">
+    </div>
+    <img style="width: 1000px;height: 800px" src="../images/nkss2.png" alt="">
+  </div>
+  <script src="./echarts.js"></script>
+  <script src="./jiangsu.js"></script>
+  <script>
+    function download(url){
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = "hello1.txt";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+    }
+  echarts.registerMap('jiangsu', geoJson, {});
+  const citys = '南京市 徐州市 连云港市 宿迁市 淮安市 盐城市 扬州市 泰州市 镇江市 南通市 常州市 无锡市 苏州市'.split(" ");
+  let data = citys.map(name => ({name, value: Math.round(Math.random()*100)}));
+  const geoOption = {
+    map: 'jiangsu',
+    aspectScale: 0.75,
+    itemStyle: {
+      color: 'rgba(0,0,0,0)',
+      borderColor: '#1f7ae9',
+      borderWidth: 1,
+      emphasis: {
+        show: false,
+      }
+    },
+  }
+  let texture = document.createElement("canvas");
+  texture.width = 20;
+  texture.height = 20;
+  let ctx = texture.getContext("2d");
+  ctx.fillStyle="#FF0000";
+  ctx.beginPath();
+  ctx.arc(10,10,5,0,2*Math.PI);
+  ctx.fill();
+  console.log(texture.toDataURL())
+  let img = document.getElementsByTagName("img")[0];
+  let option = {
+    backgroundColor: '#000a38',
+    geo: [
+      {
+        ...geoOption,
+        z: 4,
+        itemStyle: {
+          color: '#000a38',
+          borderColor: '#1f7ae9',
+          borderWidth: 0,
+        }
+      },
+      // {
+      //   ...geoOption,
+      //   zoom: 1.01,
+      //   z: 3,
+      // },
+      // {
+      //   ...geoOption,
+      //   zoom: 1.02,
+      //   z: 2,
+      // },
+      // {
+      //   ...geoOption,
+      //   zoom: 1.03,
+      //   z: 1,
+      // },
+    ],
+    // visualMap: {
+    //   orient: 'horizontal',
+    //   itemWidth: 28,
+    //   itemHeight: 119,
+    //   align: 'bottom',
+    //   show: true,
+    //   left: 'left',
+    //   bottom:0,
+    //   inRange: {
+    //     color: ['#06f9f6', '#2457f9']
+    //   },
+    // },
+    series: [{
+      name: '江苏',
+      type: 'map',
+      // roam: true,
+      mapType: 'jiangsu',
+      aspectScale: 0.75, //地图长度比
+      label: {
+        normal: {
+          show: false,
+        },
+        emphasis: {
+          show: true,
+        }
+      },
+      // itemStyle: {
+      //   normal: {
+      //     borderColor: '#2ba4d6',
+      //     borderWidth: 2,
+      //     opacity: 0.6
+      //   }
+      // },
+      itemStyle: {
+          areaColor: {
+                // type: 'linear',
+                // x: 0,
+                // y: 0,
+                // x2: 1,
+                // y2: 1,
+                // colorStops: [{
+                //     offset: 0, color: '#24a0fa'
+                // }, {
+                //     offset: 1, color: '#15072a'
+                // }],
+                global: false,
+                image: img,
+                // repeat: 'repeat',
+          }
+
+      },
+      data: data,
+      z: 5,
+    }]
+  }
+  let myChart = echarts.init(document.getElementById("map"));
+  myChart.setOption(option)
+  
+  
+  </script>
+</body>
+
+</html>

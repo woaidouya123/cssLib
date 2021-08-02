@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>仪表盘</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="chart" style="height: 313px "></div>
+    <script src="./echarts-4.7.js"></script>
+    <script>
+    function initData() {
+        let option = {
+            backgroundColor: "#000000",
+            series: [{
+                type: 'gauge',
+                legendHoverLink: false,
+                center: ['50%', '25%'],    // 默认全局居中
+                radius: '50%',
+                detail: {
+                    formatter: [
+                        '{a| }',
+                        '{b|{value}%}'
+                    ].join('\n'),
+
+                    rich: {
+                        a: {
+                            backgroundColor: '#ffffff',
+                            height:2,
+                            width:2,
+                            borderRadius:2
+                        },
+                        b: {
+                            fontSize: 20,
+                            color: '#ffffff',
+                            height:100
+                        },
+                        
+                    },
+                    offsetCenter:[0, 48]
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        width: 5,
+                        shadowBlur: 0,
+                        color: [
+                            [0.2, '#0fe5f0'],
+                            [0.8, '#007fc6'],
+                            [1, '#fa3f43']
+                        ]
+                    }
+                },
+                axisTick: {
+                    show: true,
+                    length: 8,
+                    splitNumber: 10,
+                    lineStyle: {
+                        color: 'auto'
+                    }
+                },
+                axisLabel: {
+                    distance: 2,
+                    color: '#ffffff',
+                    fontSize: 12
+                },
+                splitLine: {
+                    show: true,
+                    length: 10,
+                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    show: true,
+                    length: '55%',
+                    width: 4,
+                },
+                itemStyle: {
+                    color: '#fa3f43'
+                },
+                title: {
+                  show: true,
+                  offsetCenter: [0, "100%"],
+                  color: '#ffffff'
+                },
+                data: [
+                {
+                    value: 50,
+                    name:'白名单占比'
+                }
+                ]
+
+            }]
+        }
+        let myChart = echarts.init(document.getElementById("chart"));
+        myChart.setOption(option)
+    }
+    initData();
+    </script>
+</body>
+
+</html>

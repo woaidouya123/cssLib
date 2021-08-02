@@ -59,9 +59,8 @@
 	}
 	
 	function myVue (data, el, exp) {
-	    this.data = data;
-	    observable(data);                      //将数据变的可观测
-	    el.innerHTML = this.data[exp];           // 初始化模板数据的值
+		this.data = data;
+	    el.innerHTML = data;
 	    new Watcher(this, exp, function (value) {
 	        el.innerHTML = value;
 	    });
@@ -115,6 +114,8 @@
 		})
 	}
 	var loadModel = function(){
+		var data = {"name":"hello"};
+		observable(data);
 		myVue(data, el, exp)
 	};
 	document.addEventListener( "DOMContentLoaded", function(){

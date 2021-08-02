@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>半圆占比</title>
+	<meta charset="utf-8">
+</head>
+<body>
+<canvas width="500" height="500">您的浏览器不支持canvas!!!</canvas>
+<script>
+	let canvas = document.getElementsByTagName("canvas")[0];
+	let draw = function(canvas, width, height, border, color, bgcolor, percents){
+		let ctx = canvas.getContext("2d");
+		ctx.beginPath();
+		ctx.moveTo(0,height);
+		ctx.arc(width/2,width,width/2,Math.PI,Math.PI*2,false)
+		ctx.lineTo(width-border,height);
+		ctx.arc(width/2,width,width/2-border,0,Math.PI,true);
+		ctx.closePath();
+		ctx.fillStyle=bgcolor;
+		ctx.fill();
+		ctx.beginPath();
+		ctx.moveTo(0,height);
+		ctx.arc(width/2,width,width/2,Math.PI,Math.PI*(1+percents),false);
+		console.log(rotate(width/2,height,Math.PI*percents, border, height))
+		ctx.lineTo(...rotate(width/2,height,Math.PI*percents, border, height));
+		ctx.arc(width/2,height,(width-border*2)/2,Math.PI*(percents-1),-Math.PI,true);
+		ctx.closePath();
+		ctx.fillStyle=color;
+		ctx.fill();
+	}
+	function rotate(cx, cy, deg, x, y) {
+	    var cos = Math.cos(deg), sin = Math.sin(deg);
+	    return [
+	        +((x - cx) * cos - (y - cy) * sin + cx).toFixed(7),
+	        +((x - cx) * sin + (y - cy) * cos + cy).toFixed(7)
+	    ];
+	}
+	draw(canvas, 500,500, 50, '#01cd83', '#eeeeee', 0.875)
+	
+</script>
+</body>
+</html>

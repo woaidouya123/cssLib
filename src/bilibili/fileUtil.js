@@ -9,7 +9,7 @@ var WebSocket = require('ws');
 var bodyParser = require('body-parser');
 app.use('/', express.static('./'));
 app.use(proxyMiddleware.createProxyMiddleware('/getRoomId',{target: "https://api.live.bilibili.com/room/v1/Room/room_init",changeOrigin:true}));
-app.use(proxyMiddleware.createProxyMiddleware('/getHostToken',{target: "https://api.live.bilibili.com/room/v1/Danmu/getConf",changeOrigin:true}));
+app.use(proxyMiddleware.createProxyMiddleware('/getHostToken',{target: "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo",changeOrigin:true}));
 app.use(proxyMiddleware.createProxyMiddleware('/getDM',{target: "wss://broadcastlv.chat.bilibili.com/sub",changeOrigin:true,ws:true}));
 //request('https://api.live.bilibili.com/room/v1/Room/room_init', {json:true}, (err, res, body) => {if(err) {returnconsole.log(err); }console.log(body);console.log(body.explanation);})
 

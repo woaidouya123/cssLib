@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>markline</title>
+</head>
+<body>
+
+<script>
+	function init(text){
+		let canvas = document.createElement("canvas"), img = new Image();
+		img.src = "data:image/png;base64,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";
+		canvas.width=106;
+		let ctx = canvas.getContext("2d");
+		ctx.font="12px Microsoft YaHei";
+		let len = ctx.measureText(text).width;
+		let width = Math.max(len+10, 46);
+		canvas.height = width*2;
+		ctx.translate(53,width);
+		ctx.rotate(-90*Math.PI/180);
+		console.log(len);
+		img.onload = function(){
+			ctx.drawImage(img,0,0,46,53,-width,-53,width,53);
+			ctx.fillStyle="#fff";
+			ctx.fillText(text,(width-len)/2-width,25-53);
+			console.log(canvas.toDataURL())
+			let image = document.createElement("img");
+			image.src = canvas.toDataURL();
+			document.body.appendChild(image);
+
+		}
+		
+	}
+	init("233333333");
+</script>
+</body>
+</html>

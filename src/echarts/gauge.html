@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>仪表盘</title>
+	<meta charset="utf-8">
+	<script src="./echarts-4.7.js"></script>
+</head>
+<body>
+<div id="chart" style="height: 375px "></div>
+<script>
+	const data = 60, color='#1cb162',
+	pie_colors = [{
+					    type: 'linear',
+					    x: 0,
+					    y: 0,
+					    x2: 0,
+					    y2: 0.8,
+					    colorStops: [{
+					        offset: 0, color: color // 0% 处的颜色
+					    }, {
+					        offset: 1, color: '#fff' // 100% 处的颜色
+					    }],
+					    global: false // 缺省为 false
+					},'#fff'
+				];
+
+	function initData(){
+		let option ={
+
+			series:[{
+				type:'gauge',
+				z:2,
+				min:0,
+				max:100,
+				splitLine: {           // 分隔线
+	                length: 10,         // 属性length控制线长
+	                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+	                    color: color
+	                }
+	            },
+	            pointer:{
+	            	show:true,
+	            	width:5,
+	            },
+	            itemStyle:{
+
+	            },
+	            axisLine: {            // 坐标轴线
+	                lineStyle: {       // 属性lineStyle控制线条样式
+	                    width: 15,
+	                    color:[[1,color]]
+	                }
+	            },
+	            axisTick: {            // 坐标轴小标记
+	                show:false
+	            },
+	            axisLabel: {
+	                color: '#1cb162',
+	                padding: 3
+	            },
+	            title: {
+	                // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+	                fontWeight: 'bolder',
+	                fontSize: 20
+	            },
+	            detail: {
+	            	show:true,
+	            	color:'#fff',
+	            	backgroundColor:color,
+	            	lineHeight:60,
+	            	width:50,
+	            	height:60,
+	            	borderRadius:50,
+	            	offsetCenter:[0,0],
+	            	rich:{}
+	            },
+	            data: [{value: data}],
+			},
+			{
+				type:'pie',
+				startAngle:225,
+				data:[data,100*4/3-data],
+				radius:['80%','85%'],
+				itemStyle:{
+					color:({dataIndex})=>pie_colors[dataIndex],
+				},
+				labelLine:{
+					show:false
+				},
+				hoverAnimation :false
+			},
+			{
+				type:'pie',
+				z:1,
+				startAngle:225,
+				data:[data,100*4/3-data],
+				radius:['40%','75%'],
+				itemStyle:{
+					color:({dataIndex})=>pie_colors[dataIndex],
+				},
+				labelLine:{
+					show:false
+				},
+				hoverAnimation :false
+			}
+			]
+		}
+		let myChart = echarts.init(document.getElementById("chart"));
+        myChart.setOption(option)
+	}
+	initData();
+</script>
+</body>
+</html>

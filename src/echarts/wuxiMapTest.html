@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>地图</title>
+  <meta charset="utf-8">
+  <style>
+  #container {
+    position: relative;
+  }
+
+  #tip {
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    transition: all .3s;
+    top: 0;
+    left: 0;
+  }
+
+  #tip:before {
+    content: '';
+    position: absolute;
+    height: 2px;
+    width: 50px;
+    bottom: -50px;
+    left: -50px;
+    background-color: red;
+    transform: rotateZ(315deg) scale(1);
+    transform-origin: left;
+    animation: lineMove linear 1s;
+  }
+
+  @keyframes lineMove {
+    0% {
+      transform: rotateZ(315deg) scale(0);
+    }
+
+    100% {
+      transform: rotateZ(315deg) scale(1);
+    }
+  }
+
+  #map {
+    width: 1000px;
+    height: 800px;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="map"></div>
+    <div id="tip">
+    </div>
+  </div>
+  <script src="./echarts.js"></script>
+  <script src="./wuxi.js"></script>
+  <script>
+  echarts.registerMap('wuxi', geoJson, {});
+  const data = [{
+      name: '江阴市',
+      value: 0,
+      coords: [120.352478, 31.809895],
+    },
+    {
+      name: '惠山区',
+      value: 1,
+      coords: [120.212402, 31.658057],
+    },
+    {
+      name: '梁溪区',
+      value: 2,
+      coords: [120.296595, 31.575706],
+    },
+    {
+      name: '滨湖区',
+      value: 3,
+      coords: [120.190429, 31.440380],
+    },
+    {
+      name: '宜兴市',
+      value: 4,
+      coords: [119.820538, 31.364384],
+    },
+    {
+      name: '经开区',
+      value: 5,
+      coords: [120.319519, 31.495725],
+    },
+    {
+      name: '新吴区',
+      value: 6,
+      coords: [120.429382, 31.504800],
+    },
+    {
+      name: '锡山区',
+      value: 7,
+      coords: [120.463714, 31.645198],
+    },
+  ]
+  let option = {
+    geo: {
+      map: 'wuxi',
+      aspectScale: 0.85, //地图长度比
+      // roam: true,
+    },
+    series: [{
+      name: '无锡',
+      type: 'map',
+      // roam: true,
+      mapType: 'wuxi',
+      aspectScale: 0.85, //地图长度比
+      label: {
+        normal: {
+          show: false,
+        },
+        emphasis: {
+          show: false,
+        }
+      },
+      itemStyle: {
+        normal: {
+          borderColor: '#58d9fc',
+          borderWidth: 2,
+          areaColor: {
+            type: 'radial',
+            x: 0.5,
+            y: 0.5,
+            r: 0.8,
+            colorStops: [{
+              offset: 0,
+              color: '#102d70' // 0% 处的颜色
+            }, {
+              offset: 1,
+              color: '#104d92' // 100% 处的颜色
+            }],
+            globalCoord: false // 缺省为 false
+          }
+        }
+      },
+      data: data
+    }, {
+      name: 'effect',
+      type: 'effectScatter',
+      coordinateSystem: 'geo',
+      showEffectOn: 'emphasis',
+      rippleEffect: {
+        brushType: 'stroke',
+      },
+      label: {
+        show: true,
+        position: 'bottom',
+        formatter: '{@[2]}',
+      },
+      data: data.map(v => v.coords.concat(v.name))
+    }]
+  }
+  let myChart = echarts.init(document.getElementById("map"));
+  myChart.setOption(option)
+  myChart.on("mouseover", (opt) => {
+    console.log(opt)
+    if (opt.componentType == "series" && opt.componentSubType == "map") {
+      myChart.dispatchAction({
+        type: 'highlight',
+        seriesName: 'effect',
+        dataIndex: opt.value,
+      })
+      let tip = document.getElementById("tip");
+      if (tip) {
+        tip.parentNode.removeChild(tip);
+      }
+      // tip = document.createElement("div");
+      // tip.id = "tip";
+      let pos = myChart.convertToPixel('geo', opt.data.coords);
+      tip.style.left = pos[0] + 50 + 'px';
+      tip.style.top = pos[1] - 70 + 'px';
+      tip.innerHTML = opt.name;
+      document.getElementById("container").appendChild(tip);
+
+    }
+  })
+  myChart.on("mouseout", (opt) => {
+    if (opt.componentType == "series" && opt.componentSubType == "map") {
+      myChart.dispatchAction({
+        type: 'downplay',
+        seriesName: 'effect',
+        dataIndex: opt.value,
+      })
+
+    }
+  })
+  </script>
+</body>
+
+</html>

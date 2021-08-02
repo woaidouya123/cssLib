@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>豆花友人帐</title>
+	<meta charset="utf-8">
+	<meta name=viewport content="width=device-width,initial-scale=1">
+	<style>
+		@media screen and (min-width: 750px){
+			html{
+				font-size:26px;
+			}
+		}
+		@media screen and (min-width: 350px) and (max-width: 750px){
+			html{
+				font-size:16px;
+			}
+		}
+		.container .main img{
+			display: block;
+			width: 10rem;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			
+		</div>
+		<div class="main">
+			<img src="./destination.jpg" alt="开发版二维码">
+			<p class="date"></p>
+		</div>
+		<div class="footer">
+			
+		</div>
+	</div>
+	<script type="text/javascript" src="./date.js"></script>
+	<script>
+		// 填入更新日期时间
+		var p = document.querySelector("p.date");
+		p.innerHTML = window.lastDate;
+	</script>
+</body>
+</html>

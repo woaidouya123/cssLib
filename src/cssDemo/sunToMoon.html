@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>sunToMoon</title>
+	<meta charset="utf-8">
+	<style>
+		body{
+			background-image: url(../images/2.jpeg);
+
+		}
+		.container{
+			text-align: center;
+			height: 500px;
+		}
+		.sun{
+			display: inline-block;
+			width: 200px;
+			height: 200px;
+			background-color: white;
+			border-radius: 50%;
+			position: relative;
+			margin: 200px 0;
+		}
+		.mask{
+			display: block;
+			position: absolute;
+			width: 200px;
+			height: 200px;
+			/*background-color: black;*/
+			background-image: url(../images/2.jpeg);
+			border-radius: 50%;
+			left: 200px;
+			top:0px;
+			/*transition: all 0.1s linear;*/
+			will-change: left,top;
+		}
+		.bars{
+			 counter-reset: bar;
+		}
+		.bars > div{
+			position: absolute;
+			width: 300px;
+			height: 10px;
+			top: 100px;
+			left: -50px;
+			text-align: right;
+			font-size: 0px;
+		}
+		.bars > div > span{
+			display: inline-block;
+			height: 100%;
+			width: 20px;
+			background-color: white;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="sun">
+			<div class="mask"></div>
+			<div class="bars">
+			</div>
+		</div>
+		<div class="handler">
+			<input type="range" oninput="handleIt(this)" value="0" >
+		</div>
+		
+	</div>
+	<script>
+		// 绘制刻度
+		function drawBar(tick, all){
+			let bars = document.getElementsByClassName("bars")[0],div,span;
+			bars.innerHTML = "";
+			for(let i=0;i<tick;i++){
+				div = document.createElement("div"),
+				span = document.createElement("span");
+				div.style.transform = "rotateZ("+i*360/all+"deg)";
+				div.appendChild(span);
+				bars.appendChild(div);
+			}
+		}
+
+		drawBar(18,18)
+
+		// 太阳转动
+		function drawMask(time, all){
+			let min = 30, max = 200, startAngel = 15;
+			let deg = startAngel - 180*time/all, len = max - (max - min)/all*time,
+				mask = document.getElementsByClassName("mask")[0];
+			mask.style.left =len*Math.cos(Math.PI/180*deg) + "px";
+			mask.style.top =len*Math.sin(Math.PI/180*deg) + "px";
+			console.log(time,all,deg,len,mask.style.left,mask.style.top);
+			// 隐藏遮罩（用于图片背景）
+			setTimeout(()=>{
+				mask.style.backgroundPositionX = (mask.parentNode.offsetLeft+mask.offsetLeft)*(-1)+"px";
+				mask.style.backgroundPositionY = (mask.parentNode.offsetTop+mask.offsetTop)*(-1)+"px";
+			},0)
+			
+
+		}
+
+		drawMask(0,360)
+
+		//渐近方法
+
+
+		// let c = 1,count=36;
+		// let sI = setInterval(function(){
+		// 	drawMask(c*360/count,360);
+		// 	drawBar(c,36)
+		// 	console.log(c);
+		// 	if(c>=count)clearInterval(sI);
+		// 	c++;
+		// },100)
+
+		function handleIt(context){
+			let val = context.value;
+			drawBar((100-val)/100*18, 18);
+			drawMask(val/100*360,360);
+		}
+
+
+		
+		
+		
+	</script>
+
+</body>
+</html>
