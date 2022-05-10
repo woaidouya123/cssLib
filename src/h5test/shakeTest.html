@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>shake</title>
+  </head>
+  <body>
+    <button onclick="shakeIt()">shake</button>
+    <script>
+      navigator.vibrate = navigator.vibrate ||
+				navigator.webkitVibrate ||
+				navigator.mozVibrate ||
+				navigator.msVibrate;
+		
+			if (navigator.vibrate) {
+				// 支持
+        console.log(navigator.vibrate)
+				console.log("支持震动！")
+			}
+      function shakeIt(){
+        alert("点击")
+        navigator.vibrate([3000, 2000,1000]);
+      }
+    </script>
+  </body>
+</html>
