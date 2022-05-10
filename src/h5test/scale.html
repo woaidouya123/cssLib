@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>canvas</title>
+  <style type="text/css">
+  .container {
+    position: relative;
+    margin: 20px 0 0 20px;
+    width: fit-content;
+    height: fit-content;
+  }
+
+  .xAxis {
+    position: absolute;
+    top: -20px;
+    width: 100%;
+    height: 20px;
+  }
+  .yAxis {
+  	position: absolute;
+  	left: -20px;
+  	width: 20px;
+  	height: 100%;
+  }
+  .content {
+  	width: 500px;
+  	height: 500px;
+  	transform-origin: 0 0;
+    transform: scale(1);
+    background-color: red;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="xAxis" id="xAxis"></div>
+    <div class="yAxis" id="yAxis"></div>
+    <div class="content" id="app"></div>
+  </div>
+  <script type="text/javascript">
+  const app = document.getElementById("app");
+  const xAxis = document.getElementById("xAxis");
+  function drawXAxis(dom, max, scale, height) {
+  	const width = dom.offsetWidth * scale, k = width / max;
+  	const canvas = document.createElement("canvas");
+    canvas.height = height;
+    canvas.width = width;
+    let ctx = canvas.getContext("2d");
+    ctx.lineWidth = 1;
+   	ctx.strokeStyle = "#f00";
+    let d = Math.max(Math.ceil(max / width * 10), 5);
+    console.log(d, 888)
+    for(let i=0; d*i<max; i++){
+    	ctx.moveTo(d*i*k, height);
+    	ctx.lineTo(d*i*k, height/2);
+    	ctx.stroke();
+    }
+    dom.innerHTML = "";
+    dom.appendChild(canvas);
+  }
+  drawXAxis(xAxis, 1080, 1, 20)
+  var scrollFunc = function(e) {
+    e = e || window.event;
+    if (e.wheelDelta) { //判断浏览器IE，谷歌滑轮事件
+      if (e.wheelDelta > 0) { //当滑轮向上滚动时
+        let scale = app.style.transform && +app.style.transform.replace(/scale\((\d+(\.\d+)?)\)/, '$1') || 1;
+        scale = (scale + 0.1).toFixed(2);
+        app.style.transform = `scale(${scale})`
+        drawXAxis(xAxis, 1080, scale, 20)
+      }
+      if (e.wheelDelta < 0) { //当滑轮向下滚动时
+        let scale = app.style.transform && +app.style.transform.replace(/scale\((\d+(\.\d+)?)\)/, '$1') || 1;
+        scale = (scale - 0.1).toFixed(2);
+        app.style.transform = `scale(${scale})`
+        drawXAxis(xAxis, 1080, scale, 20)
+      }
+    } else if (e.detail) { //Firefox滑轮事件
+      if (e.detail > 0) { //当滑轮向上滚动时
+        console.log(e.detail)
+      }
+      if (e.detail < 0) { //当滑轮向下滚动时
+        console.log(e.detail)
+      }
+    }
+  };
+  document.getElementById("app").onmousewheel = scrollFunc;
+  // var canvas = document.getElementById("aaa");
+  // var ctx = canvas.getContext("2d");
+  // ctx.fillStyle="#FF0000";
+  // ctx.fillRect(0,0,150,75);
+  </script>
+</body>
+
+</html>
