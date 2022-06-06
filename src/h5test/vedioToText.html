@@ -10,7 +10,7 @@
       vertical-align: top;
     }
     canvas{
-      display: none;
+      display: inline-block;
     }
   </style>
 </head>
@@ -26,10 +26,11 @@
     var canvas = document.getElementById("prevImgCanvas");
     canvas.width = 720;
     canvas.height = 360;
-    var time = 0;
+    var time = 0, frameIndex = 0;
     var context = canvas.getContext('2d');
 
     const TICK = 10;
+    const FRAME = 2;
     const TEXT = ["密","好","回","飞","口"];
 
     function calcText(light) {
@@ -78,7 +79,10 @@
 
     function videoRun() {
       time += 16.7;
-      video.currentTime = (time / 1000 % video.duration);
+      if(frameIndex >= FRAME){
+        video.currentTime = (time / 1000 % video.duration);
+        frameIndex = 0;
+      }else  frameIndex++;
       window.requestAnimationFrame(videoRun);
     }
 
