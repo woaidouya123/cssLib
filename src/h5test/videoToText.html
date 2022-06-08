@@ -17,6 +17,23 @@
       transform: translateX(-50%) translateY(-50%);
       background-color: transparent;
     }
+    .process{
+      display: none;
+      width: 200px;
+      height: 40px;
+      border: 1px solid black;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      background-color: transparent;
+      padding: 1px;
+    }
+    .process .process-bar{
+      height: 100%;
+      background-color: #000;
+      width: 0%;
+    }
     .container{
       position: absolute;
       z-index: 10;
@@ -58,6 +75,9 @@
   <div class="container">
     <!-- <input type="file" accept="video/*" /> -->
     <button id="start">请调低音量，点击开始</button>
+    <div class="process" id="process-bar">
+      <div class="process-bar"></div>
+    </div>
     <div class="text-content">
       <div id="audio-left"></div>
       <div id="text"></div>
@@ -71,6 +91,7 @@
     var audioDivRight = document.getElementById("audio-right");
     var audioDivLeft = document.getElementById("audio-left");
     var canvas = document.createElement("canvas");
+    var process = document.querySelector("#process-bar");
     var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
     var audioContext = new AudioContext();//实例化
 
@@ -132,10 +153,15 @@
       const ajax = new XMLHttpRequest();
       ajax.open("get", url, true);
       ajax.responseType = 'blob';
+      ajax.addEventListener('progress', (progress) => {
+        const percentage = ((progress.loaded / progress.total) * 100).toFixed(2);
+        process.children[0].style.width = `${percentage}%`;
+      });
       ajax.onload = function() {
         var fileReader = new FileReader();
         fileReader.readAsArrayBuffer(this.response);
         fileReader.onload = function (e) {
+          process.style.display = "none";
           audioAnimation = window.requestAnimationFrame(videoRun);
           console.log(audioContext)
           audioContext.decodeAudioData(e.target.result, function (buffer) {
@@ -169,6 +195,7 @@
     var startBtn = document.querySelector('#start');
     startBtn.addEventListener('click', () => {
       startBtn.style.display = "none";
+      process.style.display = "block";
       init();
     }, false);
 
