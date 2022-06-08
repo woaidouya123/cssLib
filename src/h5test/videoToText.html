@@ -2,10 +2,20 @@
 
 <head>
   <title>视频转文字</title>
+  <meta charset="utf-8">
   <style>
     body{
       overflow: hidden;
       padding: 0px;
+    }
+    #start{
+      border:none;
+      outline: none;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      background-color: transparent;
     }
     .container{
       position: absolute;
@@ -46,7 +56,8 @@
 <body>
   
   <div class="container">
-    <input type="file" accept="video/*" />
+    <!-- <input type="file" accept="video/*" /> -->
+    <button id="start">请调低音量，点击开始</button>
     <div class="text-content">
       <div id="audio-left"></div>
       <div id="text"></div>
@@ -114,6 +125,53 @@
       textDiv.innerHTML = temp;
     }, false);
 
+    var init = function () {
+      time = 0;
+      let url = `../images/test.mp4`;
+      video.src = url;
+      const ajax = new XMLHttpRequest();
+      ajax.open("get", url, true);
+      ajax.responseType = 'blob';
+      ajax.onload = function() {
+        var fileReader = new FileReader();
+        fileReader.readAsArrayBuffer(this.response);
+        fileReader.onload = function (e) {
+          audioAnimation = window.requestAnimationFrame(videoRun);
+          console.log(audioContext)
+          audioContext.decodeAudioData(e.target.result, function (buffer) {
+            var audioBufferSourceNode = audioContext.createBufferSource();
+            var analyser = audioContext.createAnalyser();
+            analyser.fftSize = 64;
+            audioBufferSourceNode.loop = true;
+            audioBufferSourceNode.connect(analyser);
+            analyser.connect(audioContext.destination);
+            audioBufferSourceNode.buffer = buffer;
+            audioBufferSourceNode.start();
+            var bufferLength = analyser.frequencyBinCount;
+            var dataArray = new Uint8Array(bufferLength);
+            function draw() {
+              let audioText = "";
+              drawVisual = requestAnimationFrame(draw);
+              analyser.getByteFrequencyData(dataArray);
+              for (var i = 0; i < bufferLength; i++) {
+                audioText += new Array(Math.floor(dataArray[i] / 20)).fill("回").join("") + "<br/>";
+              }
+              audioDivRight.innerHTML = audioText;
+              audioDivLeft.innerHTML = audioText;
+            };
+            draw();
+          })
+        }
+      }
+      ajax.send();
+    };
+
+    var startBtn = document.querySelector('#start');
+    startBtn.addEventListener('click', () => {
+      startBtn.style.display = "none";
+      init();
+    }, false);
+
     var playSelectedFile = function (event) {
       textAnimation && window.cancelAnimationFrame(textAnimation)
       audioAnimation && window.cancelAnimationFrame(audioAnimation)
@@ -152,8 +210,8 @@
       }
     }
 
-    var input = document.querySelector('input');
-    input.addEventListener('change', playSelectedFile, false);
+    // var input = document.querySelector('input');
+    // input.addEventListener('change', playSelectedFile, false);
 
     function reloadRandomFrame() {
       if (!isNaN(video.duration)) {
