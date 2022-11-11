@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>loading</title>
+  <style>
+    .wrap {
+      position: relative;
+      width: 300px;
+      height: 100px;
+    }
+
+    .border {
+      border: 2px solid rgb(15, 48, 194);
+      /* 设置border-image时 border-radius失效 */
+      border-radius: 20px;
+      border-image: linear-gradient(45deg, rgb(184, 159, 218), rgb(15, 48, 194)) 1;
+      clip-path: inset(0 96% 0 0);
+      animation: clipPath 5s infinite linear;
+      height: 100%;
+      position: relative;
+    }
+
+    .inner {
+      position: absolute;
+      width: 100%;
+      top: 30px;
+      color: rgb(15, 48, 194);
+      line-height: 50px;
+      font-size: 24px;
+      text-align: center;
+      animation: changeColor 5s infinite linear;
+    }
+
+    @keyframes clipPath {
+      0% {
+        clip-path: inset(0 0 96% 0);
+        filter: hue-rotate(0deg);
+      }
+
+      25% {
+        clip-path: inset(0 96% 0 0);
+      }
+
+      50% {
+        clip-path: inset(96% 0 0 0);
+        filter: hue-rotate(360deg);
+      }
+
+      75% {
+        clip-path: inset(0 0 0 96%);
+      }
+
+      100% {
+        clip-path: inset(0 0 96% 0);
+        filter: hue-rotate(0deg);
+      }
+    }
+
+    @keyframes changeColor {
+      0% {
+        filter: hue-rotate(0deg);
+      }
+
+      50% {
+        filter: hue-rotate(360deg);
+      }
+
+      100% {
+        filter: hue-rotate(0deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="border"></div>
+    <span class="inner">loading</span>
+  </div>
+</body>
+
+</html>
